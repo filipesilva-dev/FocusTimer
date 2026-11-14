@@ -1,6 +1,7 @@
 import React from 'react';
 import { Platform, Text } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createNativeStackNavigator } from '@react-navigation/native-stack'; 
 import { Ionicons } from '@expo/vector-icons';
 
 import TimerScreen from '../screens/TimerScreen';
@@ -10,6 +11,7 @@ import AgendaScreen from '../screens/AgendaScreen';
 import GraficosScreen from '../screens/GraficosScreen';
 
 const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator();
 
 function renderLabel(label: string, color: string) {
   return (
@@ -64,7 +66,7 @@ export default function TabNavigator() {
     >
       <Tab.Screen
         name="Tarefas"
-        component={TarefasScreen}
+        component={TarefasStack}
         options={{ tabBarLabel: ({ color }) => renderLabel('Tarefas', color) }}
       />
       <Tab.Screen
@@ -89,4 +91,12 @@ export default function TabNavigator() {
       />
     </Tab.Navigator>
   );
+}
+
+function TarefasStack() {
+  return(
+    <Stack.Navigator>
+      <Stack.Screen name="Tarefas" component={TarefasScreen} />
+    </Stack.Navigator>
+  )
 }
