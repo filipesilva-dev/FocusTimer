@@ -5,7 +5,9 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
 
 import TimerScreen from '../screens/TimerScreen';
-import TarefasScreen from '../screens/TarefasScreen';
+import TarefasScreen from '../routes/tarefas/TarefasScreen';
+import NewTarefaModal from '../routes/tarefas/NewTarefaModal';
+import TarefaDetails from '../routes/tarefas/TarefaDetails';
 import CardsScreen from '../screens/CardsScreen';
 import AgendaScreen from '../screens/AgendaScreen';
 import GraficosScreen from '../screens/GraficosScreen';
@@ -97,6 +99,8 @@ function TarefasStack() {
   return(
     <Stack.Navigator>
       <Stack.Screen name="Tarefas" component={TarefasScreen} />
+      <Stack.Screen name="Nova Tarefa" component={NewTarefaModal} options={{ presentation: 'modal' }} />
+      <Stack.Screen name="Editar Tarefa" component={TarefaDetails} />
     </Stack.Navigator>
   )
 }
