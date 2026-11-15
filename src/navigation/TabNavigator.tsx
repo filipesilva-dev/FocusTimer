@@ -1,19 +1,20 @@
 import React from 'react';
-import { Platform, Text } from 'react-native';
+import { Pressable, Platform, Text } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack'; 
 import { Ionicons } from '@expo/vector-icons';
 
 import TimerScreen from '../routes/timer/TimerScreen';
-import TarefasScreen from '../routes/tarefas/TarefasScreen';
-import NewTarefaModal from '../routes/tarefas/NewTarefaModal';
-import TarefaDetails from '../routes/tarefas/TarefaDetails';
 import CardsScreen from '../routes/cards/CardsScreen';
 import AgendaScreen from '../routes/agenda/AgendaScreen';
 import GraficosScreen from '../routes/grafico/GraficosScreen';
+import { TarefasStackParamList } from '../types';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
+
+
+
 
 function renderLabel(label: string, color: string) {
   return (
@@ -67,7 +68,7 @@ export default function TabNavigator() {
       })}
     >
       <Tab.Screen
-        name="Tarefas"
+        name="TarefasTab"
         component={TarefasStack}
         options={{ tabBarLabel: ({ color }) => renderLabel('Tarefas', color) }}
       />
@@ -95,12 +96,39 @@ export default function TabNavigator() {
   );
 }
 
+
+import TaskScreen from '../routes/tarefas/TaskScreen';
+import TaskForm from '../routes/tarefas/TaskForm';
+import TaskDetails from '../routes/tarefas/TaskDetails';
+const TasksStack = createNativeStackNavigator<TarefasStackParamList>();
+
 function TarefasStack() {
   return(
-    <Stack.Navigator>
-      <Stack.Screen name="Tarefas" component={TarefasScreen} />
-      <Stack.Screen name="Nova Tarefa" component={NewTarefaModal} options={{ presentation: 'modal' }} />
-      <Stack.Screen name="Editar Tarefa" component={TarefaDetails} />
-    </Stack.Navigator>
+    <TasksStack.Navigator>
+      <TasksStack.Screen name="Tarefas" component={TaskScreen} options={({ navigation }) => ({
+        title: 'Tarefas', headerRight: () => (
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel="Nova tarefa"
+        hitSlop={8}
+        onPress={() => navigation.navigate('Nova Tarefa')}
+      >
+        <Ionicons name="add" size={24} color="#333" />
+      </Pressable>
+    )
+      })}/>
+      <TasksStack.Screen name="Nova Tarefa" component={TaskForm} options={{ presentation: 'modal', headerShown: false }} />
+      <TasksStack.Screen name="TaskDetails" component={TaskDetails} options={({ navigation }) => ({
+        title: 'Detalhes da Tarefa', headerRight: () => (
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel="Editar tarefa"
+        hitSlop={8}
+        onPress={() => navigation.navigate('Nova Tarefa')}
+      >
+        <Ionicons name="pencil" size={24} color="#333" />
+      </Pressable> )
+    })} />
+    </TasksStack.Navigator>
   )
 }
