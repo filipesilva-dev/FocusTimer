@@ -70,20 +70,35 @@ Tabela consolidada de todas as funcionalidades do projeto, ordenada por priorida
 ```
 focusTimer/
 ├── App.tsx                        # Raiz: NavigationContainer + TabNavigator
+├── index.ts                       # Ponto de entrada do Expo
 ├── app.json                       # Metadados e configuração do Expo
 ├── package.json                   # Dependências e scripts
 ├── tsconfig.json                  # Configuração do TypeScript
+├── assets/
+│   ├── icon.png                   # Ícone do aplicativo
+│   ├── splash-icon.png            # Imagem da tela de abertura
+│   ├── favicon.png                # Ícone para web
+│   └── android-icon-*.png         # Ícones do Android
 └── src/
     ├── navigation/
     │   └── TabNavigator.tsx       # Bottom tabs (5 abas)
-    ├── screens/
-    │   ├── TimerScreen.tsx        # Tela principal — Pomodoro funcional
-    │   ├── TarefasScreen.tsx      # Placeholder
-    │   ├── CardsScreen.tsx        # Placeholder
-    │   ├── AgendaScreen.tsx       # Placeholder
-    │   └── GraficosScreen.tsx     # Placeholder
+    ├── routes/
+    │   ├── agenda/
+    │   │   └── AgendaScreen.tsx   # Tela de agenda
+    │   ├── cards/
+    │   │   └── CardsScreen.tsx    # Tela de cards
+    │   ├── grafico/
+    │   │   └── GraficosScreen.tsx # Tela de gráficos
+    │   ├── tarefas/
+    │   │   ├── Components/
+    │   │   │   └── progressCard.tsx # Card de progresso
+    │   │   ├── NewTarefaModal.tsx # Modal de criação de tarefa
+    │   │   ├── TarefaDetails.tsx  # Detalhes/edição de tarefa
+    │   │   └── TarefasScreen.tsx  # Tela de tarefas
+    │   └── timer/
+    │       └── TimerScreen.tsx    # Tela principal — Pomodoro funcional
     └── types/
-        └── index.ts               # (a criar) Tipagens de domínio
+        └── index.ts               # Tipagens de domínio
 ```
 
 ### Diretórios planejados
