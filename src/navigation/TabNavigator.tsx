@@ -4,13 +4,13 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack'; 
 import { Ionicons } from '@expo/vector-icons';
 
-import TimerScreen from '../screens/TimerScreen';
+import TimerScreen from '../routes/timer/TimerScreen';
 import TarefasScreen from '../routes/tarefas/TarefasScreen';
 import NewTarefaModal from '../routes/tarefas/NewTarefaModal';
 import TarefaDetails from '../routes/tarefas/TarefaDetails';
-import CardsScreen from '../screens/CardsScreen';
-import AgendaScreen from '../screens/AgendaScreen';
-import GraficosScreen from '../screens/GraficosScreen';
+import CardsScreen from '../routes/cards/CardsScreen';
+import AgendaScreen from '../routes/agenda/AgendaScreen';
+import GraficosScreen from '../routes/grafico/GraficosScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
