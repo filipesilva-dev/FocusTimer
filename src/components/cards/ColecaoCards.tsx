@@ -6,6 +6,7 @@ import type { Card, Colecao, DadosCard } from '../../types/cards';
 import { colors } from '../../theme/colors';
 import CardForm from './CardForm';
 import CardItem from './CardItem';
+import Revisao from './Revisao';
 
 type Props = { colecaoId: number; onFechar: () => void };
 
@@ -18,6 +19,8 @@ export default function ColecaoCards({ colecaoId, onFechar }: Props) {
   const [formularioAberto, setFormularioAberto] = useState(false);
   const [cardEditando, setCardEditando] = useState<Card | null>(null);
   const [excluindo, setExcluindo] = useState(false);
+  const [revisaoAberta, setRevisaoAberta] = useState(false);
+  const voltarRevisao = useRef<(() => void) | null>(null);
   const exclusaoEmAndamento = useRef(false);
   const salvando = useRef(false);
   const montada = useRef(true);
@@ -53,6 +56,10 @@ export default function ColecaoCards({ colecaoId, onFechar }: Props) {
 
   function fechar() {
     if (salvando.current || exclusaoEmAndamento.current) return;
+    if (revisaoAberta) {
+      voltarRevisao.current?.();
+      return;
+    }
     if (formularioAberto) setFormularioAberto(false);
     else onFechar();
   }
@@ -105,7 +112,9 @@ export default function ColecaoCards({ colecaoId, onFechar }: Props) {
   return (
     <Modal visible animationType="slide" onRequestClose={fechar}>
       <SafeAreaView style={styles.safeArea}>
-        {formularioAberto ? (
+        {revisaoAberta ? (
+          <Revisao cards={cards} controleVoltar={voltarRevisao} onVoltar={() => setRevisaoAberta(false)} />
+        ) : formularioAberto ? (
           <CardForm card={cardEditando} onSalvar={salvar} onCancelar={fechar}
             onOcupado={(valor) => { salvando.current = valor; }} />
         ) : (
@@ -122,6 +131,14 @@ export default function ColecaoCards({ colecaoId, onFechar }: Props) {
               accessibilityState={{ disabled: carregando || excluindo || !colecao }}
               style={[styles.botao, (carregando || excluindo || !colecao) && styles.desabilitado]}>
               <Text style={styles.textoBotao}>Adicionar flashcard</Text>
+            </Pressable>
+            <Pressable onPress={() => setRevisaoAberta(true)}
+              disabled={carregando || excluindo || !!erro || cards.length === 0 || !colecao}
+              accessibilityRole="button" accessibilityLabel="Revisar flashcards desta coleção"
+              accessibilityState={{ disabled: carregando || excluindo || !!erro || cards.length === 0 || !colecao }}
+              style={[styles.botao, styles.revisar,
+                (carregando || excluindo || !!erro || cards.length === 0 || !colecao) && styles.desabilitado]}>
+              <Text style={styles.textoVoltar}>Revisar flashcards</Text>
             </Pressable>
             {carregando ? (
               <View style={styles.estado}>
@@ -160,6 +177,7 @@ const styles = StyleSheet.create({
   botao: { minHeight: 48, padding: 14, alignItems: 'center', justifyContent: 'center',
     backgroundColor: colors.primaryDark, borderRadius: 12, marginBottom: 16 },
   textoBotao: { color: colors.white, fontWeight: '700' },
+  revisar: { backgroundColor: colors.white, borderWidth: 1, borderColor: colors.border },
   estado: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 16 },
   mensagem: { textAlign: 'center', color: colors.textMuted, lineHeight: 22, paddingVertical: 16 },
   lista: { paddingBottom: 24 },
