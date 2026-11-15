@@ -1,3 +1,5 @@
+const URL_API = 'https://rodrigoborges.dev/api/frases/random';
+
 const FRASES_FALLBACK = [
   'Cada pequeno passo é progresso. Continue!',
   'A constância vence o talento.',
@@ -11,6 +13,21 @@ const FRASES_FALLBACK = [
   'Um passo de cada vez, sempre.',
 ];
 
+type RespostaAPI = { id: number; text: string; author: string };
+
 export async function buscarFraseMotivacional(): Promise<string> {
-  return FRASES_FALLBACK[Math.floor(Math.random() * FRASES_FALLBACK.length)];
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 5000);
+  try {
+    const resposta = await fetch(URL_API, { signal: controller.signal, headers: { Accept: 'application/json' } });
+    if (!resposta.ok) throw new Error(`HTTP ${resposta.status}`);
+    const dados: RespostaAPI = await resposta.json();
+    if (!dados?.text) throw new Error('Formato inesperado');
+    return dados.author ? `${dados.text}\n\n— ${dados.author}` : dados.text;
+  } catch (e) {
+    console.warn('[frases] API falhou, usando fallback local:', (e as Error).message);
+    return FRASES_FALLBACK[Math.floor(Math.random() * FRASES_FALLBACK.length)];
+  } finally {
+    clearTimeout(timeoutId);
+  }
 }
