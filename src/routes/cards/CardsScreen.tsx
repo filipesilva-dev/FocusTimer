@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Alert, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
-import Header from '../components/Header';
-import ColecaoForm from '../components/cards/ColecaoForm';
-import ColecaoItem from '../components/cards/ColecaoItem';
-import ColecaoCards from '../components/cards/ColecaoCards';
-import { atualizarColecao, criarColecao, excluirColecao, listarColecoes } from '../database/cardsRepository';
-import type { Colecao, DadosColecao } from '../types/cards';
-import { colors } from '../theme/colors';
+import Header from '../../components/Header';
+import ColecaoForm from '../../components/cards/ColecaoForm';
+import ColecaoItem from '../../components/cards/ColecaoItem';
+import ColecaoCards from '../../components/cards/ColecaoCards';
+import { atualizarColecao, criarColecao, excluirColecao, listarColecoes } from '../../database/cardsRepository';
+import type { Colecao, DadosColecao } from '../../types/cards';
+import { colors } from '../../theme/colors';
 
 export default function CardsScreen() {
   const [colecoes, setColecoes] = useState<Colecao[]>([]);
