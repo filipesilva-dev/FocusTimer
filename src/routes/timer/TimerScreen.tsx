@@ -1,18 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Pressable, useWindowDimensions, Modal, TextInput, ScrollView } from 'react-native';
+import {
+  View, Text, StyleSheet, Pressable, useWindowDimensions,
+  Modal, TextInput, ScrollView,
+} from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
 import * as Haptics from 'expo-haptics';
 import Header from '../../components/Header';
 import { colors } from '../../theme/colors';
+import {
+  segundosParaHMS, hmsParaSegundos, formatarTimer, formatarTempoCurto,
+} from '../../utils/tempo';
 
 type Modo = 'foco' | 'pausaCurta' | 'pausaLonga';
-type Config = { foco: number; pausaCurta: number; pausaLonga: number; ciclos: number };
-const CONFIG_PADRAO: Config = { foco: 25, pausaCurta: 5, pausaLonga: 15, ciclos: 4 };
+type Config = { focoSeg: number; pausaCurtaSeg: number; pausaLongaSeg: number; ciclos: number };
+const CONFIG_PADRAO: Config = { focoSeg: 25 * 60, pausaCurtaSeg: 5 * 60, pausaLongaSeg: 15 * 60, ciclos: 4 };
 
-function minutosDoModo(m: Modo, c: Config): number {
-  if (m === 'foco') return c.foco;
-  if (m === 'pausaCurta') return c.pausaCurta;
-  return c.pausaLonga;
+function segundosDoModo(m: Modo, c: Config): number {
+  if (m === 'foco') return c.focoSeg;
+  if (m === 'pausaCurta') return c.pausaCurtaSeg;
+  return c.pausaLongaSeg;
 }
 
 export default function TimerScreen() {
@@ -20,11 +26,11 @@ export default function TimerScreen() {
   const [config, setConfig] = useState<Config>(CONFIG_PADRAO);
   const [modo, setModo] = useState<Modo>('foco');
   const [sessaoAtual, setSessaoAtual] = useState(1);
-  const [timeLeft, setTimeLeft] = useState(CONFIG_PADRAO.foco * 60);
+  const [timeLeft, setTimeLeft] = useState(CONFIG_PADRAO.focoSeg);
   const [isRunning, setIsRunning] = useState(false);
   const [configModalVisible, setConfigModalVisible] = useState(false);
   const [draftConfig, setDraftConfig] = useState<Config>(CONFIG_PADRAO);
-  const totalTime = minutosDoModo(modo, config) * 60;
+  const totalTime = segundosDoModo(modo, config);
 
   useEffect(() => {
     if (!isRunning || timeLeft <= 0) return;
@@ -38,62 +44,36 @@ export default function TimerScreen() {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       avancarCiclo();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [timeLeft, isRunning]);
 
   useEffect(() => {
-    if (!isRunning) setTimeLeft(minutosDoModo(modo, config) * 60);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (!isRunning) setTimeLeft(segundosDoModo(modo, config));
   }, [config]);
 
   function aplicarModo(novoModo: Modo, novaSessao: number) {
     setModo(novoModo);
     setSessaoAtual(novaSessao);
-    setTimeLeft(minutosDoModo(novoModo, config) * 60);
+    setTimeLeft(segundosDoModo(novoModo, config));
   }
 
   function avancarCiclo() {
     if (modo === 'foco') {
       if (sessaoAtual >= config.ciclos) aplicarModo('pausaLonga', 1);
       else aplicarModo('pausaCurta', sessaoAtual + 1);
-    } else {
-      aplicarModo('foco', sessaoAtual);
-    }
+    } else aplicarModo('foco', sessaoAtual);
   }
 
-  function toggleTimer() {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    setIsRunning((p) => !p);
-  }
-
-  function resetTimer() {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    setIsRunning(false);
-    setTimeLeft(minutosDoModo(modo, config) * 60);
-  }
-
+  function toggleTimer() { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); setIsRunning((p) => !p); }
+  function resetTimer() { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setIsRunning(false); setTimeLeft(segundosDoModo(modo, config)); }
   function trocarModo(novo: Modo) {
     if (isRunning || novo === modo) return;
     Haptics.selectionAsync();
-    if (novo === 'foco') aplicarModo('foco', 1);
-    else aplicarModo(novo, sessaoAtual);
+    if (novo === 'foco') aplicarModo('foco', 1); else aplicarModo(novo, sessaoAtual);
   }
+  function abrirConfig() { Haptics.selectionAsync(); setDraftConfig(config); setConfigModalVisible(true); }
+  function salvarConfig() { Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); setConfig(draftConfig); setConfigModalVisible(false); }
 
-  function abrirConfig() {
-    Haptics.selectionAsync();
-    setDraftConfig(config);
-    setConfigModalVisible(true);
-  }
-
-  function salvarConfig() {
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    setConfig(draftConfig);
-    setConfigModalVisible(false);
-  }
-
-  const minutes = Math.floor(timeLeft / 60);
-  const seconds = timeLeft % 60;
-  const formattedTime = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+  const formattedTime = formatarTimer(timeLeft);
   const size = Math.min(width * 0.7, 240);
   const strokeWidth = 8;
   const radius = (size - strokeWidth) / 2;
@@ -123,9 +103,7 @@ export default function TimerScreen() {
             </Pressable>
           </View>
         </View>
-        <View style={styles.modeBadge}>
-          <Text style={[styles.modeText, { color: corProgresso }]}>{modoLabel}</Text>
-        </View>
+        <View style={styles.modeBadge}><Text style={[styles.modeText, { color: corProgresso }]}>{modoLabel}</Text></View>
         <View style={{ width: size, height: size, marginBottom: 24 }}>
           <Svg width={size} height={size}>
             <Circle cx={size/2} cy={size/2} r={radius} stroke={corFundoCirculo} strokeWidth={strokeWidth} fill="transparent" />
@@ -139,28 +117,30 @@ export default function TimerScreen() {
         <Pressable style={[styles.button, isRunning ? styles.buttonPause : styles.buttonStart]} onPress={toggleTimer}>
           <Text style={styles.buttonText}>{isRunning ? 'PAUSAR' : 'INICIAR'}</Text>
         </Pressable>
-        <Pressable style={styles.buttonReset} onPress={resetTimer}>
-          <Text style={styles.buttonResetText}>Reiniciar</Text>
-        </Pressable>
-        <Pressable style={styles.buttonConfig} onPress={abrirConfig}>
-          <Text style={styles.buttonConfigText}>⚙️ Configurar tempos</Text>
-        </Pressable>
+        <Pressable style={styles.buttonReset} onPress={resetTimer}><Text style={styles.buttonResetText}>Reiniciar</Text></Pressable>
+        <Pressable style={styles.buttonConfig} onPress={abrirConfig}><Text style={styles.buttonConfigText}>⚙️ Configurar tempos</Text></Pressable>
       </ScrollView>
+
       <Modal visible={configModalVisible} transparent animationType="fade" onRequestClose={() => setConfigModalVisible(false)}>
         <View style={styles.modalBackdrop}>
           <View style={styles.modalBox}>
             <Text style={styles.modalTitle}>Configurar Timer</Text>
-            <ConfigRow label="Foco (min)" value={draftConfig.foco} onChange={(v) => setDraftConfig({ ...draftConfig, foco: v })} />
-            <ConfigRow label="Pausa curta (min)" value={draftConfig.pausaCurta} onChange={(v) => setDraftConfig({ ...draftConfig, pausaCurta: v })} />
-            <ConfigRow label="Pausa longa (min)" value={draftConfig.pausaLonga} onChange={(v) => setDraftConfig({ ...draftConfig, pausaLonga: v })} />
-            <ConfigRow label="Ciclos por rodada" value={draftConfig.ciclos} onChange={(v) => setDraftConfig({ ...draftConfig, ciclos: v })} />
+            <ScrollView style={{ maxHeight: 380 }} showsVerticalScrollIndicator={false}>
+              <ConfigTempo label="Foco" segundos={draftConfig.focoSeg} onChange={(v) => setDraftConfig({ ...draftConfig, focoSeg: v })} />
+              <ConfigTempo label="Pausa curta" segundos={draftConfig.pausaCurtaSeg} onChange={(v) => setDraftConfig({ ...draftConfig, pausaCurtaSeg: v })} />
+              <ConfigTempo label="Pausa longa" segundos={draftConfig.pausaLongaSeg} onChange={(v) => setDraftConfig({ ...draftConfig, pausaLongaSeg: v })} />
+              <View style={styles.ciclosRow}>
+                <Text style={styles.configLabel}>Ciclos por rodada</Text>
+                <TextInput style={styles.configInputSmall} keyboardType="number-pad" value={String(draftConfig.ciclos)} onChangeText={(t) => {
+                  const n = parseInt(t, 10);
+                  if (!isNaN(n) && n > 0) setDraftConfig({ ...draftConfig, ciclos: n });
+                  else if (t === '') setDraftConfig({ ...draftConfig, ciclos: 1 });
+                }} />
+              </View>
+            </ScrollView>
             <View style={styles.modalActions}>
-              <Pressable style={styles.modalCancel} onPress={() => setConfigModalVisible(false)}>
-                <Text style={styles.modalCancelText}>Cancelar</Text>
-              </Pressable>
-              <Pressable style={styles.modalSave} onPress={salvarConfig}>
-                <Text style={styles.modalSaveText}>Salvar</Text>
-              </Pressable>
+              <Pressable style={styles.modalCancel} onPress={() => setConfigModalVisible(false)}><Text style={styles.modalCancelText}>Cancelar</Text></Pressable>
+              <Pressable style={styles.modalSave} onPress={salvarConfig}><Text style={styles.modalSaveText}>Salvar</Text></Pressable>
             </View>
           </View>
         </View>
@@ -169,11 +149,34 @@ export default function TimerScreen() {
   );
 }
 
-function ConfigRow({ label, value, onChange }: { label: string; value: number; onChange: (v: number) => void }) {
+function ConfigTempo({ label, segundos, onChange }: { label: string; segundos: number; onChange: (seg: number) => void }) {
+  const { h, m, s } = segundosParaHMS(segundos);
+  function alterar(campo: 'h' | 'm' | 's', texto: string) {
+    const n = parseInt(texto, 10);
+    const valor = isNaN(n) ? 0 : Math.max(0, n);
+    const novo = campo === 'h' ? hmsParaSegundos(valor, m, s)
+      : campo === 'm' ? hmsParaSegundos(h, valor, s)
+      : hmsParaSegundos(h, m, valor);
+    onChange(Math.max(1, novo));
+  }
   return (
-    <View style={styles.configRow}>
-      <Text style={styles.configLabel}>{label}</Text>
-      <TextInput style={styles.configInput} keyboardType="number-pad" value={String(value)} onChangeText={(t) => { const n = parseInt(t, 10); if (!isNaN(n) && n > 0) onChange(n); else if (t === '') onChange(1); }} />
+    <View style={styles.configTempoBloco}>
+      <Text style={styles.configTempoLabel}>{label}</Text>
+      <View style={styles.configTempoInputs}>
+        <View style={styles.configInputWrapper}>
+          <TextInput style={styles.configInputMini} keyboardType="number-pad" value={String(h)} onChangeText={(t) => alterar('h', t)} selectTextOnFocus />
+          <Text style={styles.configInputSufixo}>h</Text>
+        </View>
+        <View style={styles.configInputWrapper}>
+          <TextInput style={styles.configInputMini} keyboardType="number-pad" value={String(m)} onChangeText={(t) => alterar('m', t)} selectTextOnFocus />
+          <Text style={styles.configInputSufixo}>min</Text>
+        </View>
+        <View style={styles.configInputWrapper}>
+          <TextInput style={styles.configInputMini} keyboardType="number-pad" value={String(s)} onChangeText={(t) => alterar('s', t)} selectTextOnFocus />
+          <Text style={styles.configInputSufixo}>s</Text>
+        </View>
+      </View>
+      <Text style={styles.configTempoPreview}>Total: {formatarTempoCurto(segundos)}</Text>
     </View>
   );
 }
@@ -184,8 +187,7 @@ const styles = StyleSheet.create({
   modoContainer: { width: '100%', gap: 8, marginBottom: 16 },
   modoRowBottom: { flexDirection: 'row', gap: 8 },
   modoBtn: { height: 44, borderRadius: 12, backgroundColor: colors.white, borderWidth: 1, borderColor: colors.border, alignItems: 'center', justifyContent: 'center' },
-  modoBtnFull: { width: '100%' },
-  modoBtnHalf: { flex: 1 },
+  modoBtnFull: { width: '100%' }, modoBtnHalf: { flex: 1 },
   modoBtnAtivoFoco: { backgroundColor: colors.primary, borderColor: colors.primary },
   modoBtnAtivoPausa: { backgroundColor: colors.pause, borderColor: colors.pause },
   modoBtnText: { fontSize: 13, fontWeight: '600', color: colors.textMuted },
@@ -196,19 +198,23 @@ const styles = StyleSheet.create({
   timerText: { fontWeight: 'bold', color: colors.text },
   sessaoText: { fontSize: 13, color: colors.textMuted, marginTop: 4 },
   button: { width: '80%', maxWidth: 240, paddingVertical: 16, borderRadius: 30, alignItems: 'center', marginTop: 8, marginBottom: 12 },
-  buttonStart: { backgroundColor: colors.primary },
-  buttonPause: { backgroundColor: colors.pause },
+  buttonStart: { backgroundColor: colors.primary }, buttonPause: { backgroundColor: colors.pause },
   buttonText: { color: colors.white, fontSize: 16, fontWeight: 'bold' },
-  buttonReset: { padding: 8 },
-  buttonResetText: { color: colors.primaryDarker, fontSize: 14, textDecorationLine: 'underline' },
-  buttonConfig: { marginTop: 16, padding: 12 },
-  buttonConfigText: { color: colors.textMuted, fontSize: 13, fontWeight: '600' },
+  buttonReset: { padding: 8 }, buttonResetText: { color: colors.primaryDarker, fontSize: 14, textDecorationLine: 'underline' },
+  buttonConfig: { marginTop: 16, padding: 12 }, buttonConfigText: { color: colors.textMuted, fontSize: 13, fontWeight: '600' },
   modalBackdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'center', padding: 24 },
   modalBox: { backgroundColor: colors.white, borderRadius: 16, padding: 20 },
   modalTitle: { fontSize: 18, fontWeight: 'bold', color: colors.text, marginBottom: 16 },
-  configRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
-  configLabel: { fontSize: 13, color: colors.textMuted },
-  configInput: { backgroundColor: colors.primaryBg, borderWidth: 1, borderColor: colors.border, borderRadius: 8, paddingHorizontal: 12, paddingVertical: 8, width: 80, textAlign: 'center', fontSize: 14, color: colors.text },
+  configTempoBloco: { backgroundColor: colors.primaryBg, borderRadius: 12, padding: 12, marginBottom: 10, borderWidth: 1, borderColor: colors.border },
+  configTempoLabel: { fontSize: 13, fontWeight: '700', color: colors.text, marginBottom: 8 },
+  configTempoInputs: { flexDirection: 'row', gap: 8, marginBottom: 8 },
+  configInputWrapper: { flex: 1, flexDirection: 'row', alignItems: 'center', backgroundColor: colors.white, borderWidth: 1, borderColor: colors.border, borderRadius: 8, paddingHorizontal: 8, paddingVertical: 4 },
+  configInputMini: { flex: 1, textAlign: 'center', fontSize: 15, color: colors.text, paddingVertical: 4 },
+  configInputSufixo: { fontSize: 12, color: colors.textMuted, marginLeft: 2 },
+  configTempoPreview: { fontSize: 12, color: colors.primary, fontWeight: '600' },
+  ciclosRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 4, marginTop: 4, marginBottom: 8 },
+  configLabel: { fontSize: 13, color: colors.textMuted, fontWeight: '600' },
+  configInputSmall: { backgroundColor: colors.primaryBg, borderWidth: 1, borderColor: colors.border, borderRadius: 8, paddingHorizontal: 12, paddingVertical: 8, width: 70, textAlign: 'center', fontSize: 14, color: colors.text },
   modalActions: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 16, gap: 12 },
   modalCancel: { flex: 1, paddingVertical: 12, borderRadius: 8, borderWidth: 1, borderColor: colors.grayStroke, alignItems: 'center' },
   modalCancelText: { color: colors.textMuted, fontWeight: '600' },
