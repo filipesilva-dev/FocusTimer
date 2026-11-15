@@ -1,9 +1,8 @@
 import React from 'react';
-import { Platform, Text } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Ionicons } from '@expo/vector-icons';
 
+import CustomTabBar from '../components/CustomTabBar';
 import TimerScreen from '../routes/timer/TimerScreen';
 import TarefasScreen from '../routes/tarefas/TarefasScreen';
 import NewTarefaModal from '../routes/tarefas/NewTarefaModal';
@@ -16,12 +15,13 @@ import ConfiguracoesScreen from '../routes/configuracoes/ConfiguracoesScreen';
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
-function renderLabel(label: string, color: string) {
+function TarefasStack() {
   return (
-    <Text numberOfLines={2} adjustsFontSizeToFit minimumFontScale={0.6} allowFontScaling={false}
-      style={{ fontSize: 14, fontWeight: '600', color, textAlign: 'center', width: '100%' }}>
-      {label}
-    </Text>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="TarefasLista" component={TarefasScreen} />
+      <Stack.Screen name="NovaTarefa" component={NewTarefaModal} options={{ presentation: 'modal' }} />
+      <Stack.Screen name="TarefaDetalhes" component={TarefaDetails} />
+    </Stack.Navigator>
   );
 }
 
@@ -29,45 +29,19 @@ export default function TabNavigator() {
   return (
     <Tab.Navigator
       initialRouteName="Timer"
-      screenOptions={({ route }) => ({
-        headerShown: false,
-        tabBarLabelPosition: 'below-icon',
-        tabBarIcon: ({ focused, color }) => {
-          let iconName: any;
-          if (route.name === 'Tarefas') iconName = focused ? 'checkbox' : 'checkbox-outline';
-          else if (route.name === 'Cards') iconName = focused ? 'albums' : 'albums-outline';
-          else if (route.name === 'Timer') iconName = focused ? 'timer' : 'timer-outline';
-          else if (route.name === 'Agenda') iconName = focused ? 'calendar' : 'calendar-outline';
-          else iconName = focused ? 'bar-chart' : 'bar-chart-outline';
-          return <Ionicons name={iconName} size={22} color={color} />;
-        },
-        tabBarActiveTintColor: '#333',
-        tabBarInactiveTintColor: '#999',
-        tabBarStyle: {
-          height: Platform.OS === 'ios' ? 92 : 78,
-          paddingTop: 8,
-          paddingBottom: Platform.OS === 'ios' ? 36 : 20,
-        },
-        tabBarItemStyle: { paddingHorizontal: 0, paddingVertical: 0 },
-      })}
+      tabBar={(props) => <CustomTabBar {...props} />}
+      screenOptions={{ headerShown: false }}
     >
-      <Tab.Screen name="TarefasTab" component={TarefasStack} options={{ tabBarLabel: ({ color }) => renderLabel('Tarefas', color) }} />
-      <Tab.Screen name="Cards" component={CardsScreen} options={{ tabBarLabel: ({ color }) => renderLabel('Cards', color) }} />
-      <Tab.Screen name="Timer" component={TimerScreen} options={{ tabBarLabel: ({ color }) => renderLabel('Timer', color) }} />
-      <Tab.Screen name="Agenda" component={AgendaScreen} options={{ tabBarLabel: ({ color }) => renderLabel('Agenda', color) }} />
-      <Tab.Screen name="Graficos" component={GraficosScreen} options={{ tabBarLabel: ({ color }) => renderLabel('Gráficos', color) }} />
-
-      <Tab.Screen name="Configuracoes" component={ConfiguracoesScreen} options={{ tabBarButton: () => null, tabBarStyle: { display: 'none' } }} />
+      <Tab.Screen name="TarefasTab" component={TarefasStack} />
+      <Tab.Screen name="Cards" component={CardsScreen} />
+      <Tab.Screen name="Timer" component={TimerScreen} />
+      <Tab.Screen name="Agenda" component={AgendaScreen} />
+      <Tab.Screen name="Graficos" component={GraficosScreen} />
+      <Tab.Screen
+        name="Configuracoes"
+        component={ConfiguracoesScreen}
+        options={{ tabBarButton: () => null }}
+      />
     </Tab.Navigator>
-  );
-}
-
-function TarefasStack() {
-  return (
-    <Stack.Navigator>
-      <Stack.Screen name="TarefasLista" component={TarefasScreen} />
-      <Stack.Screen name="NovaTarefa" component={NewTarefaModal} options={{ presentation: 'modal' }} />
-      <Stack.Screen name="TarefaDetalhes" component={TarefaDetails} />
-    </Stack.Navigator>
   );
 }
