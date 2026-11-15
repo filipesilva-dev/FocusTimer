@@ -22,3 +22,9 @@ export interface DadosColecao {
   nome: string;
   descricao?: string | null;
 }
+
+export interface DadosCard {
+  pergunta: string;
+  resposta: string;
+  dificuldade?: Dificuldade;
+}

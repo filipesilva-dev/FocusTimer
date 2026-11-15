@@ -4,6 +4,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import Header from '../components/Header';
 import ColecaoForm from '../components/cards/ColecaoForm';
 import ColecaoItem from '../components/cards/ColecaoItem';
+import ColecaoCards from '../components/cards/ColecaoCards';
 import { atualizarColecao, criarColecao, excluirColecao, listarColecoes } from '../database/cardsRepository';
 import type { Colecao, DadosColecao } from '../types/cards';
 import { colors } from '../theme/colors';
@@ -15,6 +16,7 @@ export default function CardsScreen() {
   const [atualizacao, setAtualizacao] = useState(0);
   const [formularioAberto, setFormularioAberto] = useState(false);
   const [colecaoEditando, setColecaoEditando] = useState<Colecao | null>(null);
+  const [colecaoAberta, setColecaoAberta] = useState<Colecao | null>(null);
   const [excluindo, setExcluindo] = useState(false);
   const exclusaoEmAndamento = useRef(false);
   const montada = useRef(true);
@@ -122,6 +124,7 @@ export default function CardsScreen() {
             contentContainerStyle={styles.lista}
             renderItem={({ item }) => (
               <ColecaoItem colecao={item} desabilitado={excluindo}
+                onAbrir={() => setColecaoAberta(item)}
                 onEditar={() => abrirFormulario(item)} onExcluir={() => confirmarExclusao(item)} />
             )}
             ListEmptyComponent={<Text style={styles.mensagem}>Nenhuma coleção ainda. Toque em “Nova coleção” para começar.</Text>} />
@@ -129,6 +132,11 @@ export default function CardsScreen() {
       </View>
       {formularioAberto && <ColecaoForm colecao={colecaoEditando}
         onCancelar={() => setFormularioAberto(false)} onSalvar={salvar} />}
+      {colecaoAberta && <ColecaoCards key={colecaoAberta.id} colecaoId={colecaoAberta.id}
+        onFechar={() => {
+          setColecaoAberta(null);
+          setAtualizacao((valor) => valor + 1);
+        }} />}
     </View>
   );
 }

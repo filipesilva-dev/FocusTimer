@@ -5,11 +5,12 @@ import { colors } from '../../theme/colors';
 type Props = {
   colecao: Colecao;
   desabilitado: boolean;
+  onAbrir: () => void;
   onEditar: () => void;
   onExcluir: () => void;
 };
 
-export default function ColecaoItem({ colecao, desabilitado, onEditar, onExcluir }: Props) {
+export default function ColecaoItem({ colecao, desabilitado, onAbrir, onEditar, onExcluir }: Props) {
   return (
     <View style={styles.container}>
       <Text style={styles.nome} accessibilityRole="header">{colecao.nome}</Text>
@@ -18,6 +19,12 @@ export default function ColecaoItem({ colecao, desabilitado, onEditar, onExcluir
         {colecao.totalCards} {colecao.totalCards === 1 ? 'card' : 'cards'}
       </Text>
       <View style={styles.acoes}>
+        <Pressable onPress={onAbrir} disabled={desabilitado}
+          accessibilityRole="button" accessibilityLabel={`Abrir flashcards da coleção ${colecao.nome}`}
+          accessibilityState={{ disabled: desabilitado }}
+          style={[styles.botao, desabilitado && styles.desabilitado]}>
+          <Text style={styles.editar}>Abrir</Text>
+        </Pressable>
         <Pressable onPress={onEditar} disabled={desabilitado}
           accessibilityRole="button" accessibilityLabel={`Editar coleção ${colecao.nome}`}
           accessibilityState={{ disabled: desabilitado }}

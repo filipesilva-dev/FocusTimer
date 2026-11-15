@@ -1,4 +1,4 @@
-import type { DadosColecao } from '../types/cards';
+import type { DadosCard, DadosColecao, Dificuldade } from '../types/cards';
 
 export function validarId(id: number): void {
   if (!Number.isSafeInteger(id) || id <= 0) {
@@ -29,4 +29,27 @@ export function validarColecao(dados: DadosColecao): {
   }
 
   return { nome, descricao };
+}
+
+export function validarCard(dados: DadosCard): {
+  pergunta: string;
+  resposta: string;
+  dificuldade: Dificuldade;
+} {
+  if (!dados || typeof dados.pergunta !== 'string' || typeof dados.resposta !== 'string') {
+    throw new Error('Informe a pergunta e a resposta do flashcard.');
+  }
+  const pergunta = dados.pergunta.trim();
+  const resposta = dados.resposta.trim();
+  if (Array.from(pergunta).length < 1 || Array.from(pergunta).length > 500) {
+    throw new Error('A pergunta deve ter entre 1 e 500 caracteres.');
+  }
+  if (Array.from(resposta).length < 1 || Array.from(resposta).length > 500) {
+    throw new Error('A resposta deve ter entre 1 e 500 caracteres.');
+  }
+  const dificuldade = dados.dificuldade === undefined ? 'medio' : dados.dificuldade;
+  if (dificuldade !== 'facil' && dificuldade !== 'medio' && dificuldade !== 'dificil') {
+    throw new Error('Escolha uma dificuldade válida.');
+  }
+  return { pergunta, resposta, dificuldade };
 }

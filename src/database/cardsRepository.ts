@@ -1,5 +1,5 @@
-import type { Colecao, DadosColecao } from '../types/cards';
-import { validarColecao, validarId } from '../utils/validacao';
+import type { Card, Colecao, DadosCard, DadosColecao } from '../types/cards';
+import { validarCard, validarColecao, validarId } from '../utils/validacao';
 import { obterBanco } from './connection';
 
 const CONSULTA_COLECOES = `
@@ -52,5 +52,54 @@ export async function excluirColecao(id: number): Promise<boolean> {
   validarId(id);
   const banco = await obterBanco();
   const resultado = await banco.runAsync('DELETE FROM colecoes WHERE id = ?', [id]);
+  return resultado.changes > 0;
+}
+
+const CONSULTA_CARDS = `
+  SELECT id, colecao_id AS colecaoId, pergunta, resposta, dificuldade,
+         criado_em AS criadoEm, atualizado_em AS atualizadoEm
+  FROM cards
+`;
+
+export async function listarCards(colecaoId: number): Promise<Card[]> {
+  validarId(colecaoId);
+  const banco = await obterBanco();
+  return banco.getAllAsync<Card>(
+    `${CONSULTA_CARDS} WHERE colecao_id = ? ORDER BY criado_em ASC, id ASC`,
+    [colecaoId],
+  );
+}
+
+export async function criarCard(colecaoId: number, dados: DadosCard): Promise<number> {
+  validarId(colecaoId);
+  const { pergunta, resposta, dificuldade } = validarCard(dados);
+  const banco = await obterBanco();
+  const agora = new Date().toISOString();
+  const resultado = await banco.runAsync(
+    `INSERT INTO cards (colecao_id, pergunta, resposta, dificuldade, criado_em, atualizado_em)
+     VALUES (?, ?, ?, ?, ?, ?)`,
+    [colecaoId, pergunta, resposta, dificuldade, agora, agora],
+  );
+  return resultado.lastInsertRowId;
+}
+
+export async function atualizarCard(colecaoId: number, id: number, dados: DadosCard): Promise<boolean> {
+  validarId(colecaoId);
+  validarId(id);
+  const { pergunta, resposta, dificuldade } = validarCard(dados);
+  const banco = await obterBanco();
+  const resultado = await banco.runAsync(
+    `UPDATE cards SET pergunta = ?, resposta = ?, dificuldade = ?, atualizado_em = ?
+     WHERE id = ? AND colecao_id = ?`,
+    [pergunta, resposta, dificuldade, new Date().toISOString(), id, colecaoId],
+  );
+  return resultado.changes > 0;
+}
+
+export async function excluirCard(colecaoId: number, id: number): Promise<boolean> {
+  validarId(colecaoId);
+  validarId(id);
+  const banco = await obterBanco();
+  const resultado = await banco.runAsync('DELETE FROM cards WHERE id = ? AND colecao_id = ?', [id, colecaoId]);
   return resultado.changes > 0;
 }
