@@ -1,9 +1,13 @@
 import { openDatabaseAsync, type SQLiteDatabase } from 'expo-sqlite';
+import { Platform } from 'react-native';
 
 const NOME_BANCO = 'focustimer.db';
 let conexao: Promise<SQLiteDatabase> | null = null;
 
 async function abrirBanco(): Promise<SQLiteDatabase> {
+  if (Platform.OS === 'web' && (!globalThis.isSecureContext || !navigator.storage?.getDirectory)) {
+    throw new Error('Use localhost ou HTTPS em um navegador com suporte a armazenamento local.');
+  }
   const banco = await openDatabaseAsync(NOME_BANCO);
   try {
     await banco.execAsync(`

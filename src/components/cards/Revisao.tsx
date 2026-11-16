@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState, type RefObject } from 'react';
-import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import type { Card } from '../../types/cards';
 import {
   encerrarRevisao, iniciarRevisao, responderCard, revelarResposta,
@@ -10,6 +10,7 @@ import RevisaoResumo from './RevisaoResumo';
 import RevisaoSessao from './RevisaoSessao';
 import { revisaoStyles as styles } from './revisaoStyles';
 import { colors } from '../../theme/colors';
+import { confirmarAcao } from '../../utils/alertas';
 
 type Props = {
   cards: Card[];
@@ -35,13 +36,15 @@ export default function Revisao({ cards, onVoltar, controleVoltar }: Props) {
       onVoltar();
       return;
     }
-    Alert.alert('Encerrar revisão?', 'Você verá o resumo com os flashcards que ainda ficaram pendentes.', [
-      { text: 'Continuar revisando', style: 'cancel' },
-      { text: 'Encerrar', onPress: () => {
+    confirmarAcao({
+      titulo: 'Encerrar revisão?',
+      mensagem: 'Você verá o resumo com os flashcards que ainda ficaram pendentes.',
+      textoCancelar: 'Continuar revisando', textoConfirmar: 'Encerrar', destrutiva: false,
+      onConfirmar: () => {
         const sessao = estadoAtual.current;
         if (sessao && !sessao.encerrada) atualizar(encerrarRevisao(sessao));
-      } },
-    ]);
+      },
+    });
   }, [atualizar, onVoltar]);
 
   useEffect(() => {

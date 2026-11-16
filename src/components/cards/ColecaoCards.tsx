@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Alert, FlatList, Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { atualizarCard, criarCard, excluirCard, listarCards, obterColecao } from '../../database/cardsRepository';
 import type { Card, Colecao, DadosCard } from '../../types/cards';
 import { colors } from '../../theme/colors';
+import { confirmarAcao, mostrarAviso } from '../../utils/alertas';
 import CardForm from './CardForm';
 import CardItem from './CardItem';
 import Revisao from './Revisao';
@@ -89,12 +90,12 @@ export default function ColecaoCards({ colecaoId, onFechar }: Props) {
       const removido = await excluirCard(colecaoId, card.id);
       if (montada.current) {
         setAtualizacao((valor) => valor + 1);
-        if (!removido) Alert.alert('Flashcard não encontrado', 'A lista será atualizada.');
+        if (!removido) mostrarAviso('Flashcard não encontrado', 'A lista será atualizada.');
       }
     } catch {
       if (montada.current) {
         setAtualizacao((valor) => valor + 1);
-        Alert.alert('Não foi possível confirmar a exclusão', 'A lista será atualizada. Confira e tente novamente.');
+        mostrarAviso('Não foi possível confirmar a exclusão', 'A lista será atualizada. Confira e tente novamente.');
       }
     } finally {
       exclusaoEmAndamento.current = false;
@@ -103,10 +104,11 @@ export default function ColecaoCards({ colecaoId, onFechar }: Props) {
   }
 
   function confirmarExclusao(card: Card) {
-    Alert.alert('Excluir flashcard?', 'Deseja excluir este flashcard da coleção?', [
-      { text: 'Cancelar', style: 'cancel' },
-      { text: 'Excluir', style: 'destructive', onPress: () => { void remover(card); } },
-    ]);
+    confirmarAcao({
+      titulo: 'Excluir flashcard?',
+      mensagem: 'Deseja excluir este flashcard da coleção?',
+      onConfirmar: () => { void remover(card); },
+    });
   }
 
   return (

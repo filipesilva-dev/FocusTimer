@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Alert, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import Header from '../../components/Header';
 import ColecaoForm from '../../components/cards/ColecaoForm';
@@ -8,6 +8,7 @@ import ColecaoCards from '../../components/cards/ColecaoCards';
 import { atualizarColecao, criarColecao, excluirColecao, listarColecoes } from '../../database/cardsRepository';
 import type { Colecao, DadosColecao } from '../../types/cards';
 import { colors } from '../../theme/colors';
+import { confirmarAcao, mostrarAviso } from '../../utils/alertas';
 
 export default function CardsScreen() {
   const [colecoes, setColecoes] = useState<Colecao[]>([]);
@@ -74,12 +75,12 @@ export default function CardsScreen() {
       const removida = await excluirColecao(colecao.id);
       if (montada.current) {
         setAtualizacao((valor) => valor + 1);
-        if (!removida) Alert.alert('Coleção não encontrada', 'A lista será atualizada.');
+        if (!removida) mostrarAviso('Coleção não encontrada', 'A lista será atualizada.');
       }
     } catch {
       if (montada.current) {
         setAtualizacao((valor) => valor + 1);
-        Alert.alert('Não foi possível confirmar a exclusão', 'A lista será atualizada. Confira e tente novamente.');
+        mostrarAviso('Não foi possível confirmar a exclusão', 'A lista será atualizada. Confira e tente novamente.');
       }
     } finally {
       exclusaoEmAndamento.current = false;
@@ -88,10 +89,11 @@ export default function CardsScreen() {
   }
 
   function confirmarExclusao(colecao: Colecao) {
-    Alert.alert('Excluir coleção?', `Excluir “${colecao.nome}” também removerá todos os seus cards.`, [
-      { text: 'Cancelar', style: 'cancel' },
-      { text: 'Excluir', style: 'destructive', onPress: () => { void remover(colecao); } },
-    ]);
+    confirmarAcao({
+      titulo: 'Excluir coleção?',
+      mensagem: `Excluir “${colecao.nome}” também removerá todos os seus cards.`,
+      onConfirmar: () => { void remover(colecao); },
+    });
   }
 
   return (
