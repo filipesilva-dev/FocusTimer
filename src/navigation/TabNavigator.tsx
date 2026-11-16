@@ -25,19 +25,7 @@ function TarefasStack() {
       <TasksStackNav.Screen
         name="Tarefas"
         component={TaskScreen}
-        options={({ navigation }) => ({
-          title: 'Tarefas',
-          headerRight: () => (
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel="Nova tarefa"
-              hitSlop={8}
-              onPress={() => navigation.navigate('Nova Tarefa')}
-            >
-              <Ionicons name="add" size={24} color="#333" />
-            </Pressable>
-          ),
-        })}
+        options={{ title: 'Tarefas' }}
       />
       <TasksStackNav.Screen
         name="Nova Tarefa"

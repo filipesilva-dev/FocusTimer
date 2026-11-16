@@ -1,12 +1,14 @@
 import React, { useCallback, useState } from 'react';
 import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/native';
 import Header from '../../components/Header';
 import { colors } from '../../theme/colors';
 import { formatarTempoCurto } from '../../utils/tempo';
 import { Task } from '../../types';
 import { loadTasks } from '../tarefas/helpers/storage/LoadTasks';
+import { saveTasks } from '../tarefas/helpers/storage/SaveTasks';
+import TarefaModal from './TarefaModal';
 
 const MIN_POMODORO = 25; // igual ao timer
 
@@ -49,7 +51,6 @@ function formatarMinutos(min: number) {
 }
 
 export default function AgendaScreen() {
-  const navigation = useNavigation<any>();
   const hoje = new Date();
   const dataHoje = formatarData(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
 
@@ -58,6 +59,8 @@ export default function AgendaScreen() {
   const [diaSelecionado, setDiaSelecionado] = useState(dataHoje);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [erro, setErro] = useState('');
+  const [modalVisivel, setModalVisivel] = useState(false);
+  const [tarefaEditando, setTarefaEditando] = useState<Task | null>(null);
 
   // carrega de novo toda vez que abre a aba, pra pegar o que mudou nas outras telas
   useFocusEffect(
@@ -105,9 +108,44 @@ export default function AgendaScreen() {
     setDiaSelecionado(dataHoje);
   }
 
-  function abrirTarefa(task: Task) {
-    // initial: false pra lista de tarefas ficar embaixo e o voltar funcionar
-    navigation.navigate('TarefasTab', { screen: 'TaskDetails', params: { task }, initial: false });
+  // atualiza a tela na hora e salva no AsyncStorage
+  async function salvarLista(novaLista: Task[]) {
+    setTasks(novaLista);
+    try {
+      await saveTasks(novaLista);
+    } catch (e) {
+      console.error(e);
+      setErro('Não foi possível salvar as alterações.');
+    }
+  }
+
+  function concluirTarefa(task: Task) {
+    salvarLista(tasks.map((t) => (t.id === task.id ? { ...t, status: !t.status } : t)));
+  }
+
+  function novaTarefa() {
+    setTarefaEditando(null);
+    setModalVisivel(true);
+  }
+
+  function editarTarefa(task: Task) {
+    setTarefaEditando(task);
+    setModalVisivel(true);
+  }
+
+  function salvarTarefa(task: Task) {
+    const jaExiste = tasks.some((t) => t.id === task.id);
+    if (jaExiste) {
+      salvarLista(tasks.map((t) => (t.id === task.id ? task : t)));
+    } else {
+      salvarLista([...tasks, task]);
+    }
+    setModalVisivel(false);
+  }
+
+  function excluirTarefa(id: string) {
+    salvarLista(tasks.filter((t) => t.id !== id));
+    setModalVisivel(false);
   }
 
   // monta o calendário: null = quadrado vazio
@@ -257,32 +295,58 @@ export default function AgendaScreen() {
           )}
 
           {listaDia.map((task) => (
-            <Pressable
-              key={task.id}
-              style={styles.tarefa}
-              onPress={() => abrirTarefa(task)}
-              accessibilityLabel={`Ver detalhes de ${task.title}`}
-            >
-              <Ionicons
-                name={task.status ? 'checkmark-circle' : 'ellipse-outline'}
-                size={22}
-                color={task.status ? colors.primary : colors.textLight}
-              />
-              <View style={{ flex: 1 }}>
+            <View key={task.id} style={styles.tarefa}>
+              <Pressable
+                onPress={() => concluirTarefa(task)}
+                hitSlop={8}
+                accessibilityLabel={task.status ? `Desmarcar ${task.title}` : `Concluir ${task.title}`}
+              >
+                <Ionicons
+                  name={task.status ? 'checkmark-circle' : 'ellipse-outline'}
+                  size={24}
+                  color={task.status ? colors.primary : colors.textLight}
+                />
+              </Pressable>
+
+              <Pressable style={{ flex: 1 }} onPress={() => editarTarefa(task)}>
                 <Text style={task.status ? styles.tarefaConcluida : styles.tarefaTitulo} numberOfLines={1}>
                   {task.title}
                 </Text>
                 <Text style={styles.tarefaSub}>
                   {task.className} - {task.completedPomodoros}/{task.pomodoroAmount} pomodoros
                 </Text>
-              </View>
+              </Pressable>
+
               <View style={[styles.prioridade, { backgroundColor: coresPrioridade[task.priority] }]}>
                 <Text style={styles.prioridadeTexto}>{prioridades[task.priority]}</Text>
               </View>
-            </Pressable>
+
+              <Pressable
+                onPress={() => editarTarefa(task)}
+                style={styles.botaoEditar}
+                hitSlop={6}
+                accessibilityLabel={`Editar ${task.title}`}
+              >
+                <Ionicons name="pencil" size={15} color={colors.primaryDark} />
+              </Pressable>
+            </View>
           ))}
+
+          <Pressable onPress={novaTarefa} style={styles.botaoAdicionar}>
+            <Ionicons name="add" size={18} color={colors.primaryDark} />
+            <Text style={styles.textoAdicionar}>Adicionar tarefa</Text>
+          </Pressable>
         </View>
       </ScrollView>
+
+      <TarefaModal
+        visible={modalVisivel}
+        tarefa={tarefaEditando}
+        data={diaSelecionado}
+        onFechar={() => setModalVisivel(false)}
+        onSalvar={salvarTarefa}
+        onExcluir={excluirTarefa}
+      />
     </View>
   );
 }
@@ -495,4 +559,30 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: colors.white,
   },
-});
+  botaoEditar: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: colors.primaryBg,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  botaoAdicionar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    marginTop: 8,
+    paddingVertical: 12,
+    borderRadius: 12,
+    borderWidth: 1.5,
+    borderStyle: 'dashed',
+    borderColor: colors.primaryLight,
+    backgroundColor: colors.primaryBg,
+  },
+  textoAdicionar: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: colors.primaryDark,
+  },
+});

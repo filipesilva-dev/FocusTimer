@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { View, Text, StyleSheet } from 'react-native';
 import TaskCard from './Components/taskCard';
 import DailyProgressCard from './Components/progressCards/dailyProgress';
@@ -11,7 +12,8 @@ export default function TarefasScreen() {
 
   const [loadError, setLoadError] = useState<string | null>(null);
 
-  useEffect(() => {
+  // reload when the tab gets focus (tasks can be edited in the Agenda tab)
+  useFocusEffect(useCallback(() => {
     let active = true;
 
     async function load() {
@@ -28,7 +30,7 @@ export default function TarefasScreen() {
     return () => {
       active = false;
     };
-  }, []);
+  }, []));
 
   const dailyProgress = getDailyProgress(tasks);
 
