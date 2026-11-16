@@ -43,15 +43,15 @@ export default function ColecaoItem({ colecao, desabilitado, onAbrir, onEditar, 
 }
 
 const styles = StyleSheet.create({
-  container: { backgroundColor: colors.white, borderRadius: 16, padding: 16, marginBottom: 12,
+  container: { backgroundColor: colors.white, borderRadius: 16, padding: 20, marginBottom: 16,
     borderWidth: 1, borderColor: colors.border },
-  nome: { fontSize: 18, fontWeight: '700', color: colors.text },
-  descricao: { color: colors.textMuted, marginTop: 8, lineHeight: 21 },
-  contagem: { color: colors.textMuted, marginTop: 10, fontSize: 13 },
-  acoes: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, marginTop: 8 },
-  botao: { minHeight: 44, justifyContent: 'center', paddingHorizontal: 12,
+  nome: { fontSize: 22, lineHeight: 30, fontWeight: '700', color: colors.text },
+  descricao: { color: colors.textMuted, fontSize: 16, marginTop: 12, lineHeight: 24 },
+  contagem: { color: colors.textMuted, marginTop: 12, fontSize: 15, lineHeight: 23 },
+  acoes: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, marginTop: 12 },
+  botao: { flexGrow: 1, minHeight: 52, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 16,
     borderRadius: 10, backgroundColor: colors.primaryBg },
-  editar: { color: colors.primaryDarker, fontWeight: '600' },
-  excluir: { color: '#B91C1C', fontWeight: '600' },
+  editar: { color: colors.primaryDarker, fontSize: 16, lineHeight: 24, fontWeight: '600' },
+  excluir: { color: '#B91C1C', fontSize: 16, lineHeight: 24, fontWeight: '600' },
   desabilitado: { opacity: 0.5 },
 });

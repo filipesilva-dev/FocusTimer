@@ -75,7 +75,7 @@ export default function Revisao({ cards, onVoltar, controleVoltar }: Props) {
   return (
     <View style={styles.container}>
       <Pressable onPress={voltar} accessibilityRole="button" style={locais.voltar}>
-        <Text style={styles.textoOpcao}>
+        <Text style={[styles.textoOpcao, styles.textoVoltar]}>
           {estado && !estado.encerrada ? 'Encerrar revisão' : '‹ Voltar aos flashcards'}
         </Text>
       </Pressable>

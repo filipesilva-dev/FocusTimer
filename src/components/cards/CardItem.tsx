@@ -38,16 +38,16 @@ export default function CardItem({ card, desabilitado, onEditar, onExcluir }: Pr
 }
 
 const styles = StyleSheet.create({
-  container: { backgroundColor: colors.white, borderRadius: 16, padding: 16,
-    borderWidth: 1, borderColor: colors.border, marginBottom: 12 },
-  nivel: { color: colors.primaryDarker, fontWeight: '600', marginBottom: 10 },
-  label: { color: colors.textMuted, fontSize: 12, marginTop: 6, marginBottom: 4 },
-  pergunta: { color: colors.text, fontSize: 17, fontWeight: '600', lineHeight: 24 },
-  resposta: { color: colors.text, fontSize: 15, lineHeight: 22 },
-  acoes: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, marginTop: 12 },
-  botao: { minHeight: 44, paddingHorizontal: 12, justifyContent: 'center',
+  container: { backgroundColor: colors.white, borderRadius: 16, padding: 20,
+    borderWidth: 1, borderColor: colors.border, marginBottom: 16 },
+  nivel: { color: colors.primaryDarker, fontSize: 15, lineHeight: 23, fontWeight: '600', marginBottom: 12 },
+  label: { color: colors.textMuted, fontSize: 14, lineHeight: 22, marginTop: 8, marginBottom: 6 },
+  pergunta: { color: colors.text, fontSize: 20, fontWeight: '600', lineHeight: 29 },
+  resposta: { color: colors.text, fontSize: 18, lineHeight: 27 },
+  acoes: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, marginTop: 16 },
+  botao: { flexGrow: 1, minHeight: 52, paddingHorizontal: 16, alignItems: 'center', justifyContent: 'center',
     borderRadius: 10, backgroundColor: colors.primaryBg },
-  editar: { color: colors.primaryDarker, fontWeight: '600' },
-  excluir: { color: '#B91C1C', fontWeight: '600' },
+  editar: { color: colors.primaryDarker, fontSize: 16, lineHeight: 24, fontWeight: '600' },
+  excluir: { color: '#B91C1C', fontSize: 16, lineHeight: 24, fontWeight: '600' },
   desabilitado: { opacity: 0.5 },
 });

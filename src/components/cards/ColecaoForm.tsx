@@ -49,7 +49,8 @@ export default function ColecaoForm({ colecao, onCancelar, onSalvar }: Props) {
       <SafeAreaView style={styles.safeArea}>
         <KeyboardAvoidingView style={styles.container}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-          <ScrollView contentContainerStyle={styles.conteudo} keyboardShouldPersistTaps="handled">
+          <ScrollView contentContainerStyle={[styles.conteudo, styles.conteudoColecao]}
+            keyboardShouldPersistTaps="handled">
             <Text style={styles.titulo} accessibilityRole="header">
               {colecao ? 'Editar coleção' : 'Nova coleção'}
             </Text>
@@ -57,11 +58,13 @@ export default function ColecaoForm({ colecao, onCancelar, onSalvar }: Props) {
             <TextInput value={nome} onChangeText={setNome} editable={!salvando}
               placeholder="Ex.: Biologia" placeholderTextColor={colors.textMuted}
               accessibilityLabel="Nome da coleção" style={styles.campo} autoCapitalize="sentences" />
-            <Text style={styles.label}>Descrição opcional (até 200 caracteres)</Text>
-            <TextInput value={descricao} onChangeText={setDescricao} editable={!salvando}
-              placeholder="O que você vai estudar?" placeholderTextColor={colors.textMuted}
-              accessibilityLabel="Descrição da coleção" multiline textAlignVertical="top"
-              style={[styles.campo, styles.descricao]} />
+            <View>
+              <Text style={styles.label}>Descrição opcional (até 200 caracteres)</Text>
+              <TextInput value={descricao} onChangeText={setDescricao} editable={!salvando}
+                placeholder="O que você vai estudar?" placeholderTextColor={colors.textMuted}
+                accessibilityLabel="Descrição da coleção" multiline textAlignVertical="top"
+                style={[styles.campo, styles.descricaoColecao]} />
+            </View>
             {erro ? <Text style={styles.erro} accessibilityRole="alert">{erro}</Text> : null}
             <View style={styles.acoes}>
               <Pressable onPress={cancelar} disabled={salvando} accessibilityRole="button"

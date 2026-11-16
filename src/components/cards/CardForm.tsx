@@ -50,16 +50,20 @@ export default function CardForm({ card, onCancelar, onSalvar, onOcupado }: Prop
     <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <ScrollView contentContainerStyle={styles.conteudo} keyboardShouldPersistTaps="handled">
         <Text style={styles.titulo} accessibilityRole="header">{card ? 'Editar flashcard' : 'Novo flashcard'}</Text>
-        <Text style={styles.label}>Pergunta (até 500 caracteres)</Text>
-        <TextInput value={pergunta} onChangeText={setPergunta} editable={!salvando}
-          accessibilityLabel="Pergunta do flashcard" placeholder="O que você quer lembrar?"
-          placeholderTextColor={colors.textMuted} multiline textAlignVertical="top"
-          style={[styles.campo, styles.descricao]} />
-        <Text style={styles.label}>Resposta (até 500 caracteres)</Text>
-        <TextInput value={resposta} onChangeText={setResposta} editable={!salvando}
-          accessibilityLabel="Resposta do flashcard" placeholder="Escreva a resposta"
-          placeholderTextColor={colors.textMuted} multiline textAlignVertical="top"
-          style={[styles.campo, styles.descricao]} />
+        <View style={styles.grupoExpansivel}>
+          <Text style={styles.label}>Pergunta (até 500 caracteres)</Text>
+          <TextInput value={pergunta} onChangeText={setPergunta} editable={!salvando}
+            accessibilityLabel="Pergunta do flashcard" placeholder="O que você quer lembrar?"
+            placeholderTextColor={colors.textMuted} multiline textAlignVertical="top"
+            style={[styles.campo, styles.descricao, styles.campoExpansivel]} />
+        </View>
+        <View style={styles.grupoExpansivel}>
+          <Text style={styles.label}>Resposta (até 500 caracteres)</Text>
+          <TextInput value={resposta} onChangeText={setResposta} editable={!salvando}
+            accessibilityLabel="Resposta do flashcard" placeholder="Escreva a resposta"
+            placeholderTextColor={colors.textMuted} multiline textAlignVertical="top"
+            style={[styles.campo, styles.descricao, styles.campoExpansivel]} />
+        </View>
         <Text style={styles.label}>Dificuldade</Text>
         <View style={locais.niveis}>
           {NIVEIS.map((nivel) => (
