@@ -1,0 +1,86 @@
+import { useRef, useState } from 'react';
+import {
+  KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, Text, TextInput, View,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import type { Colecao, DadosColecao } from '../../types/cards';
+import { validarColecao } from '../../utils/validacao';
+import { colors } from '../../theme/colors';
+import { formStyles as styles } from './formStyles';
+
+type Props = {
+  colecao: Colecao | null;
+  onCancelar: () => void;
+  onSalvar: (dados: DadosColecao) => Promise<void>;
+};
+
+export default function ColecaoForm({ colecao, onCancelar, onSalvar }: Props) {
+  const [nome, setNome] = useState(colecao?.nome ?? '');
+  const [descricao, setDescricao] = useState(colecao?.descricao ?? '');
+  const [erro, setErro] = useState('');
+  const [salvando, setSalvando] = useState(false);
+  const envioEmAndamento = useRef(false);
+
+  function cancelar() {
+    if (!envioEmAndamento.current) onCancelar();
+  }
+
+  async function salvar() {
+    if (envioEmAndamento.current) return;
+    envioEmAndamento.current = true;
+    setSalvando(true);
+    setErro('');
+    let salva = false;
+    try {
+      const dados = validarColecao({ nome, descricao });
+      await onSalvar(dados);
+      salva = true;
+    } catch (falha) {
+      setErro(falha instanceof Error ? falha.message : 'Não foi possível salvar a coleção.');
+    } finally {
+      envioEmAndamento.current = false;
+      setSalvando(false);
+    }
+    if (salva) onCancelar();
+  }
+
+  return (
+    <Modal visible animationType="slide" onRequestClose={cancelar}>
+      <SafeAreaView style={styles.safeArea}>
+        <KeyboardAvoidingView style={styles.container}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+          <ScrollView contentContainerStyle={[styles.conteudo, styles.conteudoColecao]}
+            keyboardShouldPersistTaps="handled">
+            <Text style={styles.titulo} accessibilityRole="header">
+              {colecao ? 'Editar coleção' : 'Nova coleção'}
+            </Text>
+            <Text style={styles.label}>Nome (até 60 caracteres)</Text>
+            <TextInput value={nome} onChangeText={setNome} editable={!salvando}
+              placeholder="Ex.: Biologia" placeholderTextColor={colors.textMuted}
+              accessibilityLabel="Nome da coleção" style={styles.campo} autoCapitalize="sentences" />
+            <View>
+              <Text style={styles.label}>Descrição opcional (até 200 caracteres)</Text>
+              <TextInput value={descricao} onChangeText={setDescricao} editable={!salvando}
+                placeholder="O que você vai estudar?" placeholderTextColor={colors.textMuted}
+                accessibilityLabel="Descrição da coleção" multiline textAlignVertical="top"
+                style={[styles.campo, styles.descricaoColecao]} />
+            </View>
+            {erro ? <Text style={styles.erro} accessibilityRole="alert">{erro}</Text> : null}
+            <View style={styles.acoes}>
+              <Pressable onPress={cancelar} disabled={salvando} accessibilityRole="button"
+                accessibilityLabel="Cancelar edição da coleção" accessibilityState={{ disabled: salvando }}
+                style={[styles.botao, styles.cancelar, salvando && styles.desabilitado]}>
+                <Text style={styles.textoCancelar}>Cancelar</Text>
+              </Pressable>
+              <Pressable onPress={salvar} disabled={salvando} accessibilityRole="button"
+                accessibilityLabel="Salvar coleção" accessibilityState={{ disabled: salvando, busy: salvando }}
+                style={[styles.botao, styles.salvar, salvando && styles.desabilitado]}>
+                <Text style={styles.textoSalvar}>{salvando ? 'Salvando…' : 'Salvar'}</Text>
+              </Pressable>
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
+    </Modal>
+  );
+}
