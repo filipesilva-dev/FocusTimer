@@ -1,0 +1,4278 @@
+═══════════════════════════════════════════════════════════════════
+PROJETO: FocusTimer
+GERADO EM: 2026-11-16 01:19:56
+DIRETÓRIO RAIZ: /home/fs/FocusTimer
+TOTAL DE ARQUIVOS: 47
+GIT: feat/refactor-geral @ c064645b
+═══════════════════════════════════════════════════════════════════
+
+───────────────────────────────────────────────────────────────────
+ÍNDICE DE ARQUIVOS
+───────────────────────────────────────────────────────────────────
+
+   1. .expo/README.md
+   2. .expo/devices.json
+   3. .gitignore
+   4. AGENTS.md
+   5. App.tsx
+   6. LICENSE
+   7. README.md
+   8. app.json
+   9. dump-projeto.sh
+  10. eas.json
+  11. index.ts
+  12. metro.config.js
+  13. package.json
+  14. src/components/CustomTabBar.tsx
+  15. src/components/Header.tsx
+  16. src/components/ModalFimSessao.tsx
+  17. src/components/cards/CardForm.tsx
+  18. src/components/cards/CardItem.tsx
+  19. src/components/cards/ColecaoCards.tsx
+  20. src/components/cards/ColecaoForm.tsx
+  21. src/components/cards/ColecaoItem.tsx
+  22. src/components/cards/Revisao.tsx
+  23. src/components/cards/RevisaoConfig.tsx
+  24. src/components/cards/RevisaoResumo.tsx
+  25. src/components/cards/RevisaoSessao.tsx
+  26. src/components/cards/formStyles.ts
+  27. src/components/cards/revisaoStyles.ts
+  28. src/database/cardsRepository.ts
+  29. src/database/connection.ts
+  30. src/navigation/TabNavigator.tsx
+  31. src/routes/agenda/AgendaScreen.tsx
+  32. src/routes/agenda/TarefaModal.tsx
+  33. src/routes/cards/CardsScreen.tsx
+  34. src/routes/configuracoes/ConfiguracoesScreen.tsx
+  35. src/routes/timer/TimerScreen.tsx
+  36. src/services/alarme.ts
+  37. src/services/frasesMotivacionais.ts
+  38. src/services/notificacoes.ts
+  39. src/storage/tasks.ts
+  40. src/theme/colors.ts
+  41. src/types/cards.ts
+  42. src/types/index.ts
+  43. src/utils/alertas.ts
+  44. src/utils/revisao.ts
+  45. src/utils/tempo.ts
+  46. src/utils/validacao.ts
+  47. tsconfig.json
+
+───────────────────────────────────────────────────────────────────
+ESTRUTURA DE PASTAS
+───────────────────────────────────────────────────────────────────
+
+[1;33m![0m tree não instalado — usando fallback
+.expo/
+  web/
+    cache/
+      production/
+        images/
+          favicon/
+            favicon-a4e030697a7571b3e95d31860e4da55d2f98e5e861e2b55e414f45a8556828ba-contain-transparent/
+assets/
+src/
+  components/
+    cards/
+  database/
+  navigation/
+  routes/
+    agenda/
+    cards/
+    configuracoes/
+    timer/
+  services/
+  storage/
+  theme/
+  types/
+  utils/
+
+
+═══════════════════════════════════════════════════════════════════
+CONTEÚDO DOS ARQUIVOS
+═══════════════════════════════════════════════════════════════════
+
+───────────────────────────────────────────────────────────────────
+FILE: .expo/README.md
+LINHAS: 14 · BYTES: 889
+───────────────────────────────────────────────────────────────────
+```md
+> Why do I have a folder named ".expo" in my project?
+
+The ".expo" folder is created when an Expo project is started using "expo start" command.
+
+> What do the files contain?
+
+- "devices.json": contains information about devices that have recently opened this project. This is used to populate the "Development sessions" list in your development builds.
+- "settings.json": contains the server configuration that is used to serve the application manifest.
+- "dev/logs/": contains structured JSONL event logs from CLI commands (e.g. start.log, export.log). These are truncated on each run.
+
+> Should I commit the ".expo" folder?
+
+No, you should not share the ".expo" folder. It does not contain any information that is relevant for other developers working on the project, it is specific to your machine.
+Upon project creation, the ".expo" folder is already added to your ".gitignore" file.
+
+```
+
+───────────────────────────────────────────────────────────────────
+FILE: .expo/devices.json
+LINHAS: 3 · BYTES: 20
+───────────────────────────────────────────────────────────────────
+```json
+{
+  "devices": []
+}
+
+```
+
+───────────────────────────────────────────────────────────────────
+FILE: .gitignore
+LINHAS: 8 · BYTES: 72
+───────────────────────────────────────────────────────────────────
+```gitignore
+"node_modules/" 
+node_modules
+*.sh
+*.bash
+.expo/
+*.db
+*.db-wal
+*.db-shm
+
+```
+
+───────────────────────────────────────────────────────────────────
+FILE: AGENTS.md
+LINHAS: 39 · BYTES: 2343
+───────────────────────────────────────────────────────────────────
+```md
+This is an Expo/React Native mobile application. Prioritize mobile-first patterns, performance, and cross-platform compatibility.
+
+## Expo has changed — do not trust your training data
+
+Expo ships breaking changes every SDK release. APIs you remember are likely renamed, moved, or removed. Before writing any code that touches an Expo, EAS, or React Native API:
+
+1. Read the major version of the `expo` package in `package.json`.
+2. Fetch the matching versioned docs: `https://docs.expo.dev/versions/v<major>.0.0/`
+3. For anything else, fetch https://docs.expo.dev/llms.txt — an index of all Expo docs with corrections to common LLM misconceptions. Follow its links to the specific page you need; never answer from memory.
+
+## Commands
+
+Use `bunx` instead of `npx` if the project uses bun (`bun.lock` present).
+
+```bash
+npx expo install <package>  # ALWAYS use instead of npm/yarn/pnpm/bun add — resolves SDK-compatible versions
+npx expo start              # start the dev server
+npx expo lint               # lint
+npx tsc --noEmit            # typecheck
+npx expo-doctor             # diagnose dependency and config issues
+npx expo install --fix      # fix incompatible package versions
+```
+
+Run lint and typecheck before declaring any task done.
+
+## Navigation & Routing
+
+- Use **React-navigation** for all navigation. Routes live in `src/navigation/`
+
+## Building with EAS
+
+Use EAS to build, sign, and submit the app in the cloud (`eas build`, `eas submit`) and to ship over-the-air updates (`eas update`) — no local Xcode or Android Studio required. Run EAS CLI as `bunx eas-cli <command>` in Bun projects, or `npx eas-cli@latest <command>` otherwise; substitute that for bare `eas` in docs examples.
+Docs: https://docs.expo.dev/eas/index.md
+
+## Rules
+
+- If `ios/` and `android/` directories do not exist, they are generated (Continuous Native Generation). Never create or edit them by hand — configure native behavior in `app.json` and config plugins.
+- Expo Go only includes its bundled native modules. After adding a library with native code, the app needs a development build: `npx expo run:ios|android` locally, or `eas build --profile development`.
+- Prefer recommended Expo modules over third-party libraries, and check your available skills before adding dependencies. Docs: https://docs.expo.dev/versions/latest/index.md
+
+```
+
+───────────────────────────────────────────────────────────────────
+FILE: App.tsx
+LINHAS: 15 · BYTES: 450
+───────────────────────────────────────────────────────────────────
+```tsx
+import { NavigationContainer } from '@react-navigation/native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { StatusBar } from 'expo-status-bar';
+import TabNavigator from './src/navigation/TabNavigator';
+
+export default function App() {
+  return (
+    <SafeAreaProvider>
+      <NavigationContainer>
+        <StatusBar style="light" />
+        <TabNavigator />
+      </NavigationContainer>
+    </SafeAreaProvider>
+  );
+}
+
+```
+
+───────────────────────────────────────────────────────────────────
+FILE: LICENSE
+LINHAS: 21 · BYTES: 1106
+───────────────────────────────────────────────────────────────────
+```
+The MIT License (MIT)
+
+Copyright (c) 2015-present 650 Industries, Inc. (aka Expo)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+```
+
+───────────────────────────────────────────────────────────────────
+FILE: README.md
+LINHAS: 180 · BYTES: 9247
+───────────────────────────────────────────────────────────────────
+```md
+# FocusTimer
+
+> Aplicativo mobile de produtividade para estudos baseado na Técnica Pomodoro.
+
+[![Expo](https://img.shields.io/badge/Expo-SDK%2054-000020?logo=expo)](https://expo.dev)
+[![React Native](https://img.shields.io/badge/React%20Native-0.76-61DAFB?logo=react)](https://reactnative.dev)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.3-3178C6?logo=typescript)](https://www.typescriptlang.org)
+[![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
+
+---
+
+## Sobre o projeto
+
+O **FocusTimer** é um aplicativo de organização e produtividade para estudos que aplica a **Técnica Pomodoro** para auxiliar na manutenção do foco em sessões de estudo cronometradas, com intervalos programados.
+
+O projeto está sendo desenvolvido como trabalho final da disciplina de **Desenvolvimento Mobile com React Native**, com o objetivo de aplicar na prática os conceitos vistos em sala: navegação, hooks, componentização, ciclo de vida, notificações, requisições a Web Services e persistência de dados.
+
+A proposta vai além de um cronômetro simples: o app permitirá que o usuário organize tarefas, crie coleções de flashcards, acompanhe o progresso semanal e receba notificações para manter a constância nos estudos.
+
+---
+
+## Tecnologias
+
+| Categoria | Tecnologia |
+|---|---|
+| Framework | React Native |
+| Plataforma | Expo SDK |
+| Linguagem | TypeScript |
+| Navegação | React Navigation (Bottom Tabs) |
+| Ícones | @expo/vector-icons (Ionicons) |
+| Versionamento | Git + GitHub (Git Flow) |
+
+---
+
+## Status do desenvolvimento
+
+Tabela consolidada de todas as funcionalidades do projeto, ordenada por prioridade. Itens pendentes terão data e responsável preenchidos conforme forem sendo executados.
+
+| Área | Funcionalidade | Descrição | Prioridade | Status | Data | Responsável |
+|---|---|---|---|---|---|---|
+| **Infra** | Configuração base | Criação do projeto Expo com template TypeScript e instalação das dependências de navegação | Alta |  Concluído | 09/11/2026 | Filipe |
+| **Infra** | Configuração de Git Flow | Estrutura de branches `main`, `develop` e `feature/*` | Alta |  Pendente | — | — |
+| **Navegação** | Navegação por abas | `TabNavigator` com 5 abas, ícones do Ionicons e `initialRouteName` apontando para o Timer | Alta |  Concluído | 09/11/2026 | Filipe |
+| **Navegação** | Telas placeholder | Estrutura inicial de Tarefas, Cards, Agenda e Gráficos para navegação | Alta |  Concluído | 09/11/2026 | Filipe |
+| **Timer** | Tela Timer | Cronômetro Pomodoro com estados de foco/pausa e lógica de contagem regressiva | Alta |  Concluído | 09/11/2026 | Filipe |
+| **Timer** | Controles do timer | Botões Iniciar, Pausar e Reiniciar com feedback visual de estado | Alta |  Concluído | 09/11/2026 | Filipe |
+| **Timer** | Rotinas personalizadas | Criação de rotinas com foco, pausa curta, pausa longa e ciclos configuráveis | Alta |  Pendente | — | — |
+| **Timer** | Persistência da rotina | Salvar a rotina selecionada via AsyncStorage | Alta |  Pendente | — | — |
+| **Timer** | Notificação de ciclo | Notificar o usuário ao fim de cada ciclo | Alta |  Pendente | — | — |
+| **Tarefas** | CRUD de tarefas | Criar, listar, editar e excluir tarefas com SQLite | Alta |  Pendente | — | — |
+| **Tarefas** | Metadados de tarefa | Prioridade, matéria e estimativa de pomodoros | Alta |  Pendente | — | — |
+| **Tarefas** | Modal de tarefa | Modal de criação e edição de tarefa | Alta |  Pendente | — | — |
+| **Cards** | CRUD de cards | Coleções e flashcards com pergunta, resposta e dificuldade | Alta |  Pendente | — | — |
+| **Cards** | Sessão de revisão | Ordem aleatória/sequencial, nível da sessão e repetição de erros | Alta |  Pendente | — | — |
+| **Gráficos** | Gráfico de barras | Tempo estudado por dia da semana | Alta |  Pendente | — | — |
+| **Sistema** | Web Service | Requisições GET/POST/PUT/DELETE a uma API | Alta |  Pendente | — | — |
+| **Layout** | Layout responsivo | Círculo e fonte do timer adaptam-se a diferentes tamanhos com `useWindowDimensions` | Alta |  Concluído | 09/11/2026 | Filipe |
+| **Timer** | Pausa em background | Pausar o timer automaticamente ao ir para background (`AppState`) | Média |  Pendente | — | — |
+| **Tarefas** | Vínculo Pomodoro-tarefa | Vincular uma sessão Pomodoro a uma tarefa específica | Média |  Pendente | — | — |
+| **Agenda** | Calendário mensal | Visualização mensal com intensidade de estudo por dia | Média |  Pendente | — | — |
+| **Gráficos** | Gráfico de linha | Evolução semanal de horas estudadas | Média |  Pendente | — | — |
+| **Configurações** | Aparência e som | Tema claro/escuro, volume do alarme e escolha do som | Média |  Pendente | — | — |
+| **Sistema** | Ciclo de vida de tela | Recarregar dados ao focar uma tela (`useFocusEffect`) | Média |  Pendente | — | — |
+| **Layout** | Tab bar resiliente | Correção do corte de labels em telas pequenas e ajuste de altura/padding para Android e iOS | Média |  Concluído | 09/11/2026 | Filipe |
+| **Tarefas** | Subtarefas | Subdivisões dentro de uma tarefa | Baixa |  Pendente | — | — |
+| **Infra** | Deploy via Expo EAS | Geração de build de produção | Baixa |  Pendente | — | — |
+
+## Estrutura do projeto
+
+```
+focusTimer/
+├── App.tsx                        # Raiz: NavigationContainer + TabNavigator
+├── index.ts                       # Ponto de entrada do Expo
+├── app.json                       # Metadados e configuração do Expo
+├── package.json                   # Dependências e scripts
+├── tsconfig.json                  # Configuração do TypeScript
+├── assets/
+│   ├── icon.png                   # Ícone do aplicativo
+│   ├── splash-icon.png            # Imagem da tela de abertura
+│   ├── favicon.png                # Ícone para web
+│   └── android-icon-*.png         # Ícones do Android
+└── src/
+    ├── navigation/
+    │   └── TabNavigator.tsx       # Bottom tabs (5 abas)
+    ├── routes/
+    │   ├── agenda/
+    │   │   └── AgendaScreen.tsx   # Tela de agenda
+    │   ├── cards/
+    │   │   └── CardsScreen.tsx    # Tela de cards
+    │   ├── grafico/
+    │   │   └── GraficosScreen.tsx # Tela de gráficos
+    │   ├── tarefas/
+    │   │   ├── Components/
+    │   │   │   └── progressCard.tsx # Card de progresso
+    │   │   ├── NewTarefaModal.tsx # Modal de criação de tarefa
+    │   │   ├── TarefaDetails.tsx  # Detalhes/edição de tarefa
+    │   │   └── TarefasScreen.tsx  # Tela de tarefas
+    │   └── timer/
+    │       └── TimerScreen.tsx    # Tela principal — Pomodoro funcional
+    └── types/
+        └── index.ts               # Tipagens de domínio
+```
+
+### Diretórios planejados
+
+| Pasta | Conteúdo previsto |
+|---|---|
+| `src/database/` | Configuração do SQLite e operações CRUD |
+| `src/storage/` | Wrappers de AsyncStorage e SecureStore |
+| `src/services/` | Requisições HTTP e notificações |
+| `src/components/` | Componentes reutilizáveis (Botão, Input, Modal) |
+| `src/context/` | Contexts globais (tema, configurações) |
+| `src/hooks/` | Hooks customizados (useTimer, useTarefas) |
+
+---
+
+## Como executar
+
+### Pré-requisitos
+
+- Node.js 18+ ([download](https://nodejs.org/))
+- npm ou yarn
+- Expo Go instalado no celular ([Android](https://play.google.com/store/apps/details?id=host.exp.exponent) · [iOS](https://apps.apple.com/app/expo-go/id982107779))
+- Celular e computador na **mesma rede Wi-Fi**
+
+### Passo a passo
+
+```bash
+# 1. Clonar o repositório
+git clone https://github.com/filipesilva-dev/FocusTimer
+cd focusTimer
+
+# 2. Instalar dependências
+npm install
+
+# 3. Iniciar o servidor de desenvolvimento
+npx expo start
+```
+
+### Executar em cada plataforma
+
+| Plataforma | Como abrir |
+|---|---|
+| Android (físico) | Escanear QR code com Expo Go |
+| iOS (físico) | Escanear QR code com a câmera nativa |
+| Emulador Android | Pressionar `a` no terminal |
+| Simulador iOS (macOS) | Pressionar `i` no terminal |
+| Navegador (web) | Pressionar `w` no terminal |
+
+---
+
+## Boas práticas adotadas
+
+- **TypeScript** em todo o código
+- **Componentização** desde o início (telas isoladas)
+- **Hooks** para estado e efeitos colaterais
+- **Layout responsivo** com `useWindowDimensions`
+- **Cleanup de efeitos** no `useEffect` (evita memory leaks)
+- **Commits pequenos e descritivos** (padrão Conventional Commits)
+
+### Padrão de branches (Git Flow)
+
+| Branch | Finalidade |
+|---|---|
+| `main` | Código em produção (versão estável) |
+| `develop` | Integração contínua |
+| `feature/*` | Desenvolvimento de funcionalidades |
+| `release/*` | Preparação de versão |
+| `hotfix/*` | Correções urgentes em produção |
+
+---
+
+## Equipe
+
+| Integrante | Matrícula | Principais contribuições |
+|---|---|---|
+| _Nome completo_ | _Matrícula_ | _A preencher_ |
+| _Nome completo_ | _Matrícula_ | _A preencher_ |
+| _Nome completo_ | _Matrícula_ | _A preencher_ |
+| _Nome completo_ | _Matrícula_ | _A preencher_ |
+
+```
+
+───────────────────────────────────────────────────────────────────
+FILE: app.json
+LINHAS: 35 · BYTES: 892
+───────────────────────────────────────────────────────────────────
+```json
+{
+  "expo": {
+    "name": "focusTimer",
+    "slug": "focusTimer",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#E6F4FE",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false,
+      "package": "com.filipesilvafonseca.focusTimer"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-sqlite",
+      "expo-notifications",
+      "expo-audio"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "c760bec9-dbca-4c66-b846-cbb4e8bd1c98"
+      }
+    }
+  }
+}
+```
+
+───────────────────────────────────────────────────────────────────
+FILE: dump-projeto.sh
+LINHAS: 195 · BYTES: 7313
+───────────────────────────────────────────────────────────────────
+```sh
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$ROOT"
+
+OUTPUT="${1:-projeto-completo.txt}"
+MAX_KB=500
+MAX_BYTES=$((MAX_KB * 1024))
+OUTPUT_BASE="$(basename "$OUTPUT")"
+
+info() { printf '\033[1;34m▶\033[0m %s\n' "$*"; }
+ok()   { printf '\033[1;32m✓\033[0m %s\n' "$*"; }
+warn() { printf '\033[1;33m!\033[0m %s\n' "$*"; }
+err()  { printf '\033[1;31m✗\033[0m %s\n' "$*" >&2; }
+
+# ─── Diretórios ignorados ───
+SKIP_DIRS=(
+  node_modules .git dist build coverage .next .vite .cache .turbo
+  .parcel-cache out .output .vercel .idea .vscode __pycache__
+  .pytest_cache .mypy_cache venv .venv env tmp temp
+)
+
+# ─── Arquivos ignorados (por nome) ───
+SKIP_FILES=(
+  package-lock.json yarn.lock pnpm-lock.yaml bun.lockb
+  .DS_Store Thumbs.db
+  .env .env.local .env.development.local .env.production.local .env.test.local
+)
+
+# ─── Extensões ignoradas (binários) ───
+SKIP_EXT=(
+  png jpg jpeg gif webp ico bmp tiff avif svg
+  mp3 mp4 mov avi mkv webm ogg wav flac m4a
+  woff woff2 ttf eot otf
+  pdf zip tar gz rar 7z bz2 xz
+  exe dll so dylib bin o a obj lib
+  class jar war
+  db sqlite sqlite3
+  psd ai sketch fig xd
+  lock pid log
+)
+
+file_ext() {
+  local name; name="$(basename "$1")"
+  if [[ "$name" == *.* ]]; then
+    printf '%s' "${name##*.}" | tr '[:upper:]' '[:lower:]'
+  fi
+}
+
+should_skip() {
+  local path="$1" base ext
+  base="$(basename "$path")"
+  ext="$(file_ext "$path")"
+
+  [[ "$base" == "$OUTPUT_BASE" ]] && return 0
+
+  for f in "${SKIP_FILES[@]}"; do
+    [[ "$base" == "$f" ]] && return 0
+  done
+  for e in "${SKIP_EXT[@]}"; do
+    [[ "$ext" == "$e" ]] && return 0
+  done
+  return 1
+}
+
+info "Varrendo projeto em $ROOT"
+
+# ─── Monta array de -name para prune ───
+prune=()
+for d in "${SKIP_DIRS[@]}"; do
+  [[ ${#prune[@]} -gt 0 ]] && prune+=( -o )
+  prune+=( -name "$d" )
+done
+
+FILES_RAW="$(mktemp)"
+FILES_OK="$(mktemp)"
+trap 'rm -f "$FILES_RAW" "$FILES_OK"' EXIT
+
+find . -type d \( "${prune[@]}" \) -prune -o -type f -print0 > "$FILES_RAW"
+
+while IFS= read -r -d '' raw; do
+  rel="${raw#./}"
+  should_skip "$rel" && continue
+  printf '%s\n' "$rel" >> "$FILES_OK"
+done < "$FILES_RAW"
+
+LC_ALL=C sort -o "$FILES_OK" "$FILES_OK"
+TOTAL=$(wc -l < "$FILES_OK" | tr -d ' ')
+ok "$TOTAL arquivos encontrados"
+
+info "Escrevendo $OUTPUT"
+
+{
+  echo "═══════════════════════════════════════════════════════════════════"
+  echo "PROJETO: $(basename "$ROOT")"
+  echo "GERADO EM: $(date '+%Y-%m-%d %H:%M:%S')"
+  echo "DIRETÓRIO RAIZ: $ROOT"
+  echo "TOTAL DE ARQUIVOS: $TOTAL"
+  if command -v git >/dev/null 2>&1 && [[ -d .git ]]; then
+    BRANCH="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo '?')"
+    COMMIT="$(git rev-parse --short HEAD 2>/dev/null || echo '?')"
+    echo "GIT: $BRANCH @ $COMMIT"
+  fi
+  echo "═══════════════════════════════════════════════════════════════════"
+  echo ""
+
+  echo "───────────────────────────────────────────────────────────────────"
+  echo "ÍNDICE DE ARQUIVOS"
+  echo "───────────────────────────────────────────────────────────────────"
+  echo ""
+  n=0
+  while IFS= read -r f; do
+    [[ -z "$f" ]] && continue
+    n=$((n + 1))
+    printf '%4d. %s\n' "$n" "$f"
+  done < "$FILES_OK"
+  echo ""
+
+  echo "───────────────────────────────────────────────────────────────────"
+  echo "ESTRUTURA DE PASTAS"
+  echo "───────────────────────────────────────────────────────────────────"
+  echo ""
+
+  if command -v tree >/dev/null 2>&1; then
+    TREE_IGNORE="$(IFS='|'; echo "${SKIP_DIRS[*]}")"
+    tree -a -I "$TREE_IGNORE" --charset=utf8 2>/dev/null || true
+  else
+    warn "tree não instalado — usando fallback"
+    while IFS= read -r p; do
+      [[ "$p" == "." ]] && continue
+      p="${p#./}"
+      slashes="${p//[!\/]/}"
+      depth="${#slashes}"
+      indent=""
+      for ((i = 0; i < depth; i++)); do indent+="  "; done
+      printf '%s%s/\n' "$indent" "$(basename "$p")"
+    done < <(find . -type d \( "${prune[@]}" \) -prune -o -type d -print | sort)
+  fi
+
+  echo ""
+  echo ""
+  echo "═══════════════════════════════════════════════════════════════════"
+  echo "CONTEÚDO DOS ARQUIVOS"
+  echo "═══════════════════════════════════════════════════════════════════"
+  echo ""
+
+  while IFS= read -r file; do
+    [[ -z "$file" ]] && continue
+    [[ ! -f "$file" ]] && continue
+
+    size=$(wc -c < "$file" | tr -d ' ')
+    lines=$(wc -l < "$file" | tr -d ' ')
+    ext="$(file_ext "$file")"
+
+    echo "───────────────────────────────────────────────────────────────────"
+    echo "FILE: $file"
+    echo "LINHAS: $lines · BYTES: $size"
+    echo "───────────────────────────────────────────────────────────────────"
+
+    if (( size > MAX_BYTES )); then
+      printf '[arquivo maior que %s KB — conteúdo omitido]\n\n' "$MAX_KB"
+      continue
+    fi
+
+    if [[ -n "$ext" ]]; then
+      printf '```%s\n' "$ext"
+    else
+      printf '```\n'
+    fi
+
+    cat "$file"
+    last="$(tail -c1 "$file" 2>/dev/null || true)"
+    [[ "$last" != $'\n' ]] && echo ""
+    printf '```\n\n'
+  done < "$FILES_OK"
+
+  echo "═══════════════════════════════════════════════════════════════════"
+  echo "FIM"
+  echo "═══════════════════════════════════════════════════════════════════"
+} > "$OUTPUT"
+
+OUT_SIZE="$(du -h "$OUTPUT" | cut -f1)"
+OUT_LINES=$(wc -l < "$OUTPUT" | tr -d ' ')
+
+ok "Pronto: $OUTPUT ($OUT_SIZE · $OUT_LINES linhas)"
+echo ""
+echo "  Uso:"
+echo "    ./dump-projeto.sh                    # gera projeto-completo.txt"
+echo "    ./dump-projeto.sh saida.txt          # nome customizado"
+echo "    MAX_KB=1000 ./dump-projeto.sh        # aumenta limite de tamanho"
+echo ""
+echo "  Ver o arquivo:  cat $OUTPUT"
+echo "  Copiar tudo:    xclip -selection clipboard < $OUTPUT"
+echo ""
+
+```
+
+───────────────────────────────────────────────────────────────────
+FILE: eas.json
+LINHAS: 21 · BYTES: 344
+───────────────────────────────────────────────────────────────────
+```json
+{
+  "cli": {
+    "version": ">= 27.10.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal"
+    },
+    "preview": {
+      "distribution": "internal"
+    },
+    "production": {
+      "autoIncrement": true
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}
+
+```
+
+───────────────────────────────────────────────────────────────────
+FILE: index.ts
+LINHAS: 8 · BYTES: 307
+───────────────────────────────────────────────────────────────────
+```ts
+import { registerRootComponent } from 'expo';
+
+import App from './App';
+
+// registerRootComponent calls AppRegistry.registerComponent('main', () => App);
+// It also ensures that whether you load the app in Expo Go or in a native build,
+// the environment is set up appropriately
+registerRootComponent(App);
+
+```
+
+───────────────────────────────────────────────────────────────────
+FILE: metro.config.js
+LINHAS: 19 · BYTES: 644
+───────────────────────────────────────────────────────────────────
+```js
+const { getDefaultConfig } = require('expo/metro-config');
+
+const config = getDefaultConfig(__dirname);
+
+if (!config.resolver.assetExts.includes('wasm')) {
+  config.resolver.assetExts.push('wasm');
+}
+
+const enhanceMiddleware = config.server.enhanceMiddleware;
+config.server.enhanceMiddleware = (middleware, server) => {
+  const handler = enhanceMiddleware ? enhanceMiddleware(middleware, server) : middleware;
+  return (req, res, next) => {
+    res.setHeader('Cross-Origin-Embedder-Policy', 'credentialless');
+    res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
+    return handler(req, res, next);
+  };
+};
+
+module.exports = config;
+
+```
+
+───────────────────────────────────────────────────────────────────
+FILE: package.json
+LINHAS: 40 · BYTES: 1155
+───────────────────────────────────────────────────────────────────
+```json
+{
+  "name": "focustimer",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "dependencies": {
+    "@expo/vector-icons": "^15.0.2",
+    "@react-native-async-storage/async-storage": "2.2.0",
+    "@react-native-picker/picker": "2.11.4",
+    "@react-navigation/bottom-tabs": "^7.21.0",
+    "@react-navigation/native": "^7.5.1",
+    "@react-navigation/native-stack": "^7.21.0",
+    "expo": "~58.0.23",
+    "expo-audio": "~58.0.12",
+    "expo-checkbox": "~58.0.2",
+    "expo-dev-client": "~58.0.20",
+    "expo-haptics": "~58.0.8",
+    "expo-notifications": "~58.1.9",
+    "expo-sqlite": "~58.0.17",
+    "expo-status-bar": "~58.0.4",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "react-native": "0.88.1",
+    "react-native-paper": "^5.15.4",
+    "react-native-safe-area-context": "~5.11.1",
+    "react-native-screens": "~4.30.1",
+    "react-native-svg": "15.16.0",
+    "react-native-web": "^0.21.4"
+  },
+  "devDependencies": {
+    "@types/react": "~19.3.0",
+    "typescript": "~6.0.3"
+  },
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web"
+  },
+  "private": true
+}
+
+```
+
+───────────────────────────────────────────────────────────────────
+FILE: src/components/CustomTabBar.tsx
+LINHAS: 47 · BYTES: 2402
+───────────────────────────────────────────────────────────────────
+```tsx
+import React from 'react';
+import { View, Text, Pressable, StyleSheet, Platform } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { colors } from '../theme/colors';
+
+const TAB_CONFIG: Record<string, { label: string; icon: string; iconFocused: string }> = {
+  Cards:  { label: 'Cards',  icon: 'albums-outline',   iconFocused: 'albums' },
+  Timer:  { label: 'Timer',  icon: 'timer-outline',    iconFocused: 'timer' },
+  Agenda: { label: 'Agenda', icon: 'calendar-outline', iconFocused: 'calendar' },
+};
+
+export default function CustomTabBar({ state, navigation }: any) {
+  const insets = useSafeAreaInsets();
+  const visible = state.routes.filter((r: any) => TAB_CONFIG[r.name]);
+
+  return (
+    <View style={[styles.container, { paddingBottom: Math.max(insets.bottom, 8) }]}>
+      {visible.map((route: any) => {
+        const realIndex = state.routes.indexOf(route);
+        const isFocused = state.index === realIndex;
+        const cfg = TAB_CONFIG[route.name];
+
+        const onPress = () => {
+          const event = navigation.emit({ type: 'tabPress', target: route.key, canPreventDefault: true });
+          if (!isFocused && !event.defaultPrevented) navigation.navigate(route.name);
+        };
+
+        return (
+          <Pressable key={route.key} onPress={onPress} style={styles.tab} hitSlop={6}>
+            <Ionicons name={(isFocused ? cfg.iconFocused : cfg.icon) as any} size={22} color={isFocused ? colors.primary : colors.textMuted} />
+            <Text numberOfLines={1} allowFontScaling={false} style={[styles.label, { color: isFocused ? colors.primary : colors.textMuted }, isFocused && styles.labelActive]}>
+              {cfg.label}
+            </Text>
+          </Pressable>
+        );
+      })}
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flexDirection: 'row', backgroundColor: colors.white, borderTopWidth: 1, borderTopColor: colors.border, paddingTop: 8, paddingHorizontal: 4, ...Platform.select({ android: { elevation: 8 }, ios: { shadowColor: '#000', shadowOffset: { width: 0, height: -2 }, shadowOpacity: 0.06, shadowRadius: 4 } }) },
+  tab: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: 4, minHeight: 52, gap: 2 },
+  label: { fontSize: 11, fontWeight: '500', textAlign: 'center' },
+  labelActive: { fontWeight: '700' },
+});
+
+```
+
+───────────────────────────────────────────────────────────────────
+FILE: src/components/Header.tsx
+LINHAS: 44 · BYTES: 1970
+───────────────────────────────────────────────────────────────────
+```tsx
+import React from 'react';
+import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { colors } from '../theme/colors';
+
+type HeaderProps = { subtitle: string; showBack?: boolean };
+
+export default function Header({ subtitle, showBack = false }: HeaderProps) {
+  const navigation = useNavigation<any>();
+  const insets = useSafeAreaInsets();
+  return (
+    <View style={[styles.container, { paddingTop: insets.top + 8 }]}>
+      <View style={styles.side}>
+        {showBack && (
+          <Pressable onPress={() => navigation.goBack()} style={styles.iconBtn} hitSlop={8}>
+            <Ionicons name="arrow-back" size={22} color={colors.white} />
+          </Pressable>
+        )}
+      </View>
+      <View style={styles.titleContainer}>
+        <Text style={styles.title}>FocusTimer</Text>
+        <Text style={styles.subtitle}>{subtitle}</Text>
+      </View>
+      <View style={styles.side}>
+        {!showBack && (
+          <Pressable onPress={() => navigation.navigate('Configuracoes')} style={styles.iconBtn} hitSlop={8}>
+            <Ionicons name="settings-outline" size={22} color={colors.white} />
+          </Pressable>
+        )}
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { backgroundColor: colors.primaryDark, flexDirection: 'row', alignItems: 'center', paddingBottom: 14, paddingHorizontal: 16 },
+  side: { width: 48, alignItems: 'center', justifyContent: 'center' },
+  iconBtn: { width: 38, height: 38, borderRadius: 19, backgroundColor: 'rgba(255,255,255,0.18)', alignItems: 'center', justifyContent: 'center' },
+  titleContainer: { flex: 1, alignItems: 'center' },
+  title: { color: colors.white, fontSize: 18, fontWeight: '800' },
+  subtitle: { color: colors.primaryTint, fontSize: 11, marginTop: 2, fontWeight: '500' },
+});
+
+```
+
+───────────────────────────────────────────────────────────────────
+FILE: src/components/ModalFimSessao.tsx
+LINHAS: 62 · BYTES: 3434
+───────────────────────────────────────────────────────────────────
+```tsx
+import React from 'react';
+import { Modal, View, Text, Pressable, StyleSheet, ActivityIndicator } from 'react-native';
+import { colors } from '../theme/colors';
+
+type Props = {
+  visible: boolean; carregando: boolean; frase: string; titulo: string; emoji: string;
+  proximoLabel: string; onContinuar: () => void; onParar: () => void;
+};
+
+export default function ModalFimSessao({ visible, carregando, frase, titulo, emoji, proximoLabel, onContinuar, onParar }: Props) {
+  return (
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={onParar}>
+      <View style={styles.backdrop}>
+        <View style={styles.card}>
+          <Text style={styles.emoji}>{emoji}</Text>
+          <Text style={styles.titulo}>{titulo}</Text>
+          {carregando ? (
+            <View style={styles.carregandoBox}>
+              <ActivityIndicator size="small" color={colors.primary} />
+              <Text style={styles.carregandoText}>Buscando uma frase pra você…</Text>
+            </View>
+          ) : (
+            <View style={styles.fraseBox}>
+              <Text style={styles.frase}>&ldquo;{frase}&rdquo;</Text>
+            </View>
+          )}
+          <View style={styles.proximoBox}>
+            <Text style={styles.proximoLabel}>A seguir</Text>
+            <Text style={styles.proximoValor}>{proximoLabel}</Text>
+          </View>
+          <View style={styles.acoes}>
+            <Pressable style={styles.botaoParar} onPress={onParar}>
+              <Text style={styles.botaoPararText}>Parar aqui</Text>
+            </Pressable>
+            <Pressable style={styles.botaoContinuar} onPress={onContinuar}>
+              <Text style={styles.botaoContinuarText}>Continuar</Text>
+            </Pressable>
+          </View>
+        </View>
+      </View>
+    </Modal>
+  );
+}
+
+const styles = StyleSheet.create({
+  backdrop: { flex: 1, backgroundColor: 'rgba(6,78,59,0.55)', justifyContent: 'center', alignItems: 'center', padding: 24 },
+  card: { width: '100%', maxWidth: 420, backgroundColor: colors.white, borderRadius: 24, padding: 24, alignItems: 'center' },
+  emoji: { fontSize: 48, marginBottom: 8 },
+  titulo: { fontSize: 20, fontWeight: '800', color: colors.text, marginBottom: 16, textAlign: 'center' },
+  carregandoBox: { alignItems: 'center', gap: 8, paddingVertical: 24, marginBottom: 8 },
+  carregandoText: { fontSize: 13, color: colors.textMuted },
+  fraseBox: { backgroundColor: colors.primaryBg, borderRadius: 16, padding: 16, marginBottom: 16, borderWidth: 1, borderColor: colors.border, width: '100%' },
+  frase: { fontSize: 15, fontStyle: 'italic', color: colors.text, textAlign: 'center', lineHeight: 22 },
+  proximoBox: { alignItems: 'center', marginBottom: 20 },
+  proximoLabel: { fontSize: 11, fontWeight: '700', color: colors.textMuted, letterSpacing: 0.5, marginBottom: 4, textTransform: 'uppercase' },
+  proximoValor: { fontSize: 15, fontWeight: '700', color: colors.primary },
+  acoes: { flexDirection: 'row', gap: 12, width: '100%' },
+  botaoParar: { flex: 1, paddingVertical: 14, borderRadius: 24, borderWidth: 1.5, borderColor: colors.border, alignItems: 'center', backgroundColor: colors.white },
+  botaoPararText: { fontSize: 14, fontWeight: '700', color: colors.textMuted },
+  botaoContinuar: { flex: 1, paddingVertical: 14, borderRadius: 24, backgroundColor: colors.primary, alignItems: 'center' },
+  botaoContinuarText: { fontSize: 14, fontWeight: '700', color: colors.white },
+});
+
+```
+
+───────────────────────────────────────────────────────────────────
+FILE: src/components/cards/CardForm.tsx
+LINHAS: 100 · BYTES: 4899
+───────────────────────────────────────────────────────────────────
+```tsx
+import { useRef, useState } from 'react';
+import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import type { Card, DadosCard, Dificuldade } from '../../types/cards';
+import { validarCard } from '../../utils/validacao';
+import { colors } from '../../theme/colors';
+import { formStyles as styles } from './formStyles';
+
+type Props = {
+  card: Card | null;
+  onCancelar: () => void;
+  onSalvar: (dados: DadosCard) => Promise<void>;
+  onOcupado: (ocupado: boolean) => void;
+};
+
+const NIVEIS: { valor: Dificuldade; texto: string }[] = [
+  { valor: 'facil', texto: 'Fácil' },
+  { valor: 'medio', texto: 'Médio' },
+  { valor: 'dificil', texto: 'Difícil' },
+];
+
+export default function CardForm({ card, onCancelar, onSalvar, onOcupado }: Props) {
+  const [pergunta, setPergunta] = useState(card?.pergunta ?? '');
+  const [resposta, setResposta] = useState(card?.resposta ?? '');
+  const [dificuldade, setDificuldade] = useState<Dificuldade>(card?.dificuldade ?? 'medio');
+  const [erro, setErro] = useState('');
+  const [salvando, setSalvando] = useState(false);
+  const envioEmAndamento = useRef(false);
+
+  async function salvar() {
+    if (envioEmAndamento.current) return;
+    envioEmAndamento.current = true;
+    onOcupado(true);
+    setSalvando(true);
+    setErro('');
+    let salvo = false;
+    try {
+      await onSalvar(validarCard({ pergunta, resposta, dificuldade }));
+      salvo = true;
+    } catch (falha) {
+      setErro(falha instanceof Error ? falha.message : 'Não foi possível salvar o flashcard.');
+    } finally {
+      envioEmAndamento.current = false;
+      onOcupado(false);
+      setSalvando(false);
+    }
+    if (salvo) onCancelar();
+  }
+
+  return (
+    <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+      <ScrollView contentContainerStyle={styles.conteudo} keyboardShouldPersistTaps="handled">
+        <Text style={styles.titulo} accessibilityRole="header">{card ? 'Editar flashcard' : 'Novo flashcard'}</Text>
+        <View style={styles.grupoExpansivel}>
+          <Text style={styles.label}>Pergunta (até 500 caracteres)</Text>
+          <TextInput value={pergunta} onChangeText={setPergunta} editable={!salvando}
+            accessibilityLabel="Pergunta do flashcard" placeholder="O que você quer lembrar?"
+            placeholderTextColor={colors.textMuted} multiline textAlignVertical="top"
+            style={[styles.campo, styles.descricao, styles.campoExpansivel]} />
+        </View>
+        <View style={styles.grupoExpansivel}>
+          <Text style={styles.label}>Resposta (até 500 caracteres)</Text>
+          <TextInput value={resposta} onChangeText={setResposta} editable={!salvando}
+            accessibilityLabel="Resposta do flashcard" placeholder="Escreva a resposta"
+            placeholderTextColor={colors.textMuted} multiline textAlignVertical="top"
+            style={[styles.campo, styles.descricao, styles.campoExpansivel]} />
+        </View>
+        <Text style={styles.label}>Dificuldade</Text>
+        <View style={locais.niveis}>
+          {NIVEIS.map((nivel) => (
+            <Pressable key={nivel.valor} onPress={() => setDificuldade(nivel.valor)} disabled={salvando}
+              accessibilityRole="button" accessibilityLabel={`Dificuldade ${nivel.texto}`}
+              accessibilityState={{ selected: dificuldade === nivel.valor, disabled: salvando }}
+              style={[styles.botao, dificuldade === nivel.valor ? styles.salvar : styles.cancelar,
+                salvando && styles.desabilitado]}>
+              <Text style={dificuldade === nivel.valor ? styles.textoSalvar : styles.textoCancelar}>{nivel.texto}</Text>
+            </Pressable>
+          ))}
+        </View>
+        {erro ? <Text style={styles.erro} accessibilityRole="alert">{erro}</Text> : null}
+        <View style={styles.acoes}>
+          <Pressable onPress={() => { if (!envioEmAndamento.current) onCancelar(); }} disabled={salvando}
+            accessibilityRole="button" accessibilityLabel="Cancelar edição do flashcard"
+            accessibilityState={{ disabled: salvando }}
+            style={[styles.botao, styles.cancelar, salvando && styles.desabilitado]}>
+            <Text style={styles.textoCancelar}>Cancelar</Text>
+          </Pressable>
+          <Pressable onPress={salvar} disabled={salvando} accessibilityRole="button"
+            accessibilityLabel="Salvar flashcard" accessibilityState={{ disabled: salvando, busy: salvando }}
+            style={[styles.botao, styles.salvar, salvando && styles.desabilitado]}>
+            <Text style={styles.textoSalvar}>{salvando ? 'Salvando…' : 'Salvar'}</Text>
+          </Pressable>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
+  );
+}
+
+const locais = StyleSheet.create({
+  niveis: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 20 },
+});
+
+```
+
+───────────────────────────────────────────────────────────────────
+FILE: src/components/cards/CardItem.tsx
+LINHAS: 53 · BYTES: 2636
+───────────────────────────────────────────────────────────────────
+```tsx
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import type { Card, Dificuldade } from '../../types/cards';
+import { colors } from '../../theme/colors';
+
+type Props = {
+  card: Card;
+  desabilitado: boolean;
+  onEditar: () => void;
+  onExcluir: () => void;
+};
+
+const NIVEIS: Record<Dificuldade, string> = { facil: 'Fácil', medio: 'Médio', dificil: 'Difícil' };
+
+export default function CardItem({ card, desabilitado, onEditar, onExcluir }: Props) {
+  return (
+    <View style={styles.container}>
+      <Text style={styles.nivel}>Dificuldade: {NIVEIS[card.dificuldade]}</Text>
+      <Text style={styles.label}>Pergunta</Text>
+      <Text style={styles.pergunta} numberOfLines={3}>{card.pergunta}</Text>
+      <Text style={styles.label}>Resposta</Text>
+      <Text style={styles.resposta} numberOfLines={3}>{card.resposta}</Text>
+      <View style={styles.acoes}>
+        <Pressable onPress={onEditar} disabled={desabilitado} accessibilityRole="button"
+          accessibilityLabel={`Editar flashcard: ${card.pergunta}`}
+          accessibilityState={{ disabled: desabilitado }}
+          style={[styles.botao, desabilitado && styles.desabilitado]}>
+          <Text style={styles.editar}>Editar</Text>
+        </Pressable>
+        <Pressable onPress={onExcluir} disabled={desabilitado} accessibilityRole="button"
+          accessibilityLabel={`Excluir flashcard: ${card.pergunta}`}
+          accessibilityState={{ disabled: desabilitado }}
+          style={[styles.botao, desabilitado && styles.desabilitado]}>
+          <Text style={styles.excluir}>Excluir</Text>
+        </Pressable>
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { backgroundColor: colors.white, borderRadius: 16, padding: 20,
+    borderWidth: 1, borderColor: colors.border, marginBottom: 16 },
+  nivel: { color: colors.primaryDarker, fontSize: 15, lineHeight: 23, fontWeight: '600', marginBottom: 12 },
+  label: { color: colors.textMuted, fontSize: 14, lineHeight: 22, marginTop: 8, marginBottom: 6 },
+  pergunta: { color: colors.text, fontSize: 20, fontWeight: '600', lineHeight: 29 },
+  resposta: { color: colors.text, fontSize: 18, lineHeight: 27 },
+  acoes: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, marginTop: 16 },
+  botao: { flexGrow: 1, minHeight: 52, paddingHorizontal: 16, alignItems: 'center', justifyContent: 'center',
+    borderRadius: 10, backgroundColor: colors.primaryBg },
+  editar: { color: colors.primaryDarker, fontSize: 16, lineHeight: 24, fontWeight: '600' },
+  excluir: { color: '#B91C1C', fontSize: 16, lineHeight: 24, fontWeight: '600' },
+  desabilitado: { opacity: 0.5 },
+});
+
+```
+
+───────────────────────────────────────────────────────────────────
+FILE: src/components/cards/ColecaoCards.tsx
+LINHAS: 187 · BYTES: 8657
+───────────────────────────────────────────────────────────────────
+```tsx
+import { useEffect, useRef, useState } from 'react';
+import { ActivityIndicator, FlatList, Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { atualizarCard, criarCard, excluirCard, listarCards, obterColecao } from '../../database/cardsRepository';
+import type { Card, Colecao, DadosCard } from '../../types/cards';
+import { colors } from '../../theme/colors';
+import { confirmarAcao, mostrarAviso } from '../../utils/alertas';
+import CardForm from './CardForm';
+import CardItem from './CardItem';
+import Revisao from './Revisao';
+
+type Props = { colecaoId: number; onFechar: () => void };
+
+export default function ColecaoCards({ colecaoId, onFechar }: Props) {
+  const [colecao, setColecao] = useState<Colecao | null>(null);
+  const [cards, setCards] = useState<Card[]>([]);
+  const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState('');
+  const [atualizacao, setAtualizacao] = useState(0);
+  const [formularioAberto, setFormularioAberto] = useState(false);
+  const [cardEditando, setCardEditando] = useState<Card | null>(null);
+  const [excluindo, setExcluindo] = useState(false);
+  const [revisaoAberta, setRevisaoAberta] = useState(false);
+  const voltarRevisao = useRef<(() => void) | null>(null);
+  const exclusaoEmAndamento = useRef(false);
+  const salvando = useRef(false);
+  const montada = useRef(true);
+
+  useEffect(() => {
+    montada.current = true;
+    return () => { montada.current = false; };
+  }, []);
+
+  useEffect(() => {
+    let ativa = true;
+    async function carregar() {
+      setCarregando(true);
+      setErro('');
+      try {
+        const [dadosColecao, dadosCards] = await Promise.all([obterColecao(colecaoId), listarCards(colecaoId)]);
+        if (!ativa) return;
+        setColecao(dadosColecao);
+        setCards(dadosCards);
+        if (!dadosColecao) setErro('Esta coleção não existe mais. Volte para atualizar a lista.');
+      } catch {
+        if (ativa) {
+          setColecao(null);
+          setErro('Não foi possível carregar os flashcards.');
+        }
+      } finally {
+        if (ativa) setCarregando(false);
+      }
+    }
+    void carregar();
+    return () => { ativa = false; };
+  }, [colecaoId, atualizacao]);
+
+  function fechar() {
+    if (salvando.current || exclusaoEmAndamento.current) return;
+    if (revisaoAberta) {
+      voltarRevisao.current?.();
+      return;
+    }
+    if (formularioAberto) setFormularioAberto(false);
+    else onFechar();
+  }
+
+  function abrirFormulario(card: Card | null) {
+    setCardEditando(card);
+    setFormularioAberto(true);
+  }
+
+  async function salvar(dados: DadosCard) {
+    let atualizado = true;
+    try {
+      if (cardEditando) atualizado = await atualizarCard(colecaoId, cardEditando.id, dados);
+      else await criarCard(colecaoId, dados);
+    } catch {
+      throw new Error('Não foi possível salvar o flashcard. Confira a coleção e tente novamente.');
+    }
+    if (!atualizado) throw new Error('Este flashcard não existe mais. Cancele a edição e atualize a lista.');
+    if (montada.current) setAtualizacao((valor) => valor + 1);
+  }
+
+  async function remover(card: Card) {
+    if (exclusaoEmAndamento.current || !montada.current) return;
+    exclusaoEmAndamento.current = true;
+    setExcluindo(true);
+    try {
+      const removido = await excluirCard(colecaoId, card.id);
+      if (montada.current) {
+        setAtualizacao((valor) => valor + 1);
+        if (!removido) mostrarAviso('Flashcard não encontrado', 'A lista será atualizada.');
+      }
+    } catch {
+      if (montada.current) {
+        setAtualizacao((valor) => valor + 1);
+        mostrarAviso('Não foi possível confirmar a exclusão', 'A lista será atualizada. Confira e tente novamente.');
+      }
+    } finally {
+      exclusaoEmAndamento.current = false;
+      if (montada.current) setExcluindo(false);
+    }
+  }
+
+  function confirmarExclusao(card: Card) {
+    confirmarAcao({
+      titulo: 'Excluir flashcard?',
+      mensagem: 'Deseja excluir este flashcard da coleção?',
+      onConfirmar: () => { void remover(card); },
+    });
+  }
+
+  return (
+    <Modal visible animationType="slide" onRequestClose={fechar}>
+      <SafeAreaView style={styles.safeArea}>
+        {revisaoAberta ? (
+          <Revisao cards={cards} controleVoltar={voltarRevisao} onVoltar={() => setRevisaoAberta(false)} />
+        ) : formularioAberto ? (
+          <CardForm card={cardEditando} onSalvar={salvar} onCancelar={fechar}
+            onOcupado={(valor) => { salvando.current = valor; }} />
+        ) : (
+          <View style={styles.container}>
+            <Pressable onPress={fechar} disabled={excluindo} accessibilityRole="button"
+              accessibilityLabel="Voltar às coleções" accessibilityState={{ disabled: excluindo }}
+              style={[styles.voltar, excluindo && styles.desabilitado]}>
+              <Text style={styles.textoVoltar}>‹ Voltar às coleções</Text>
+            </Pressable>
+            <Text style={styles.titulo} accessibilityRole="header">{colecao?.nome ?? 'Flashcards'}</Text>
+            <Text style={styles.contagem}>{cards.length} {cards.length === 1 ? 'flashcard' : 'flashcards'}</Text>
+            <Pressable onPress={() => abrirFormulario(null)} disabled={carregando || excluindo || !colecao}
+              accessibilityRole="button" accessibilityLabel="Adicionar flashcard"
+              accessibilityState={{ disabled: carregando || excluindo || !colecao }}
+              style={[styles.botao, (carregando || excluindo || !colecao) && styles.desabilitado]}>
+              <Text style={styles.textoBotao}>Adicionar flashcard</Text>
+            </Pressable>
+            <Pressable onPress={() => setRevisaoAberta(true)}
+              disabled={carregando || excluindo || !!erro || cards.length === 0 || !colecao}
+              accessibilityRole="button" accessibilityLabel="Revisar flashcards desta coleção"
+              accessibilityState={{ disabled: carregando || excluindo || !!erro || cards.length === 0 || !colecao }}
+              style={[styles.botao, styles.revisar,
+                (carregando || excluindo || !!erro || cards.length === 0 || !colecao) && styles.desabilitado]}>
+              <Text style={styles.textoVoltar}>Revisar flashcards</Text>
+            </Pressable>
+            {carregando ? (
+              <View style={styles.estado}>
+                <ActivityIndicator size="large" color={colors.primaryDark} />
+                <Text style={styles.mensagem}>Carregando flashcards…</Text>
+              </View>
+            ) : erro ? (
+              <View style={styles.estado}>
+                <Text style={styles.mensagem} accessibilityRole="alert">{erro}</Text>
+                <Pressable onPress={() => setAtualizacao((valor) => valor + 1)} accessibilityRole="button" style={styles.botao}>
+                  <Text style={styles.textoBotao}>Tentar novamente</Text>
+                </Pressable>
+              </View>
+            ) : (
+              <FlatList data={cards} keyExtractor={(item) => String(item.id)}
+                contentContainerStyle={styles.lista} renderItem={({ item }) => (
+                  <CardItem card={item} desabilitado={excluindo} onEditar={() => abrirFormulario(item)}
+                    onExcluir={() => confirmarExclusao(item)} />
+                )}
+                ListEmptyComponent={<Text style={styles.mensagem}>Esta coleção ainda não tem flashcards. Adicione o primeiro para começar.</Text>} />
+            )}
+          </View>
+        )}
+      </SafeAreaView>
+    </Modal>
+  );
+}
+
+const styles = StyleSheet.create({
+  safeArea: { flex: 1, backgroundColor: colors.primaryDark },
+  container: { flex: 1, paddingHorizontal: 16, backgroundColor: colors.primaryBg },
+  voltar: { minHeight: 48, justifyContent: 'center', paddingVertical: 12, alignSelf: 'flex-start' },
+  textoVoltar: { color: colors.primaryDarker, fontWeight: '600' },
+  titulo: { fontSize: 24, fontWeight: '700', color: colors.text, marginTop: 8 },
+  contagem: { color: colors.textMuted, marginTop: 8, marginBottom: 16 },
+  botao: { minHeight: 48, padding: 14, alignItems: 'center', justifyContent: 'center',
+    backgroundColor: colors.primaryDark, borderRadius: 12, marginBottom: 16 },
+  textoBotao: { color: colors.white, fontWeight: '700' },
+  revisar: { backgroundColor: colors.white, borderWidth: 1, borderColor: colors.border },
+  estado: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 16 },
+  mensagem: { textAlign: 'center', color: colors.textMuted, lineHeight: 22, paddingVertical: 16 },
+  lista: { paddingBottom: 24 },
+  desabilitado: { opacity: 0.5 },
+});
+
+```
+
+───────────────────────────────────────────────────────────────────
+FILE: src/components/cards/ColecaoForm.tsx
+LINHAS: 86 · BYTES: 3920
+───────────────────────────────────────────────────────────────────
+```tsx
+import { useRef, useState } from 'react';
+import {
+  KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, Text, TextInput, View,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import type { Colecao, DadosColecao } from '../../types/cards';
+import { validarColecao } from '../../utils/validacao';
+import { colors } from '../../theme/colors';
+import { formStyles as styles } from './formStyles';
+
+type Props = {
+  colecao: Colecao | null;
+  onCancelar: () => void;
+  onSalvar: (dados: DadosColecao) => Promise<void>;
+};
+
+export default function ColecaoForm({ colecao, onCancelar, onSalvar }: Props) {
+  const [nome, setNome] = useState(colecao?.nome ?? '');
+  const [descricao, setDescricao] = useState(colecao?.descricao ?? '');
+  const [erro, setErro] = useState('');
+  const [salvando, setSalvando] = useState(false);
+  const envioEmAndamento = useRef(false);
+
+  function cancelar() {
+    if (!envioEmAndamento.current) onCancelar();
+  }
+
+  async function salvar() {
+    if (envioEmAndamento.current) return;
+    envioEmAndamento.current = true;
+    setSalvando(true);
+    setErro('');
+    let salva = false;
+    try {
+      const dados = validarColecao({ nome, descricao });
+      await onSalvar(dados);
+      salva = true;
+    } catch (falha) {
+      setErro(falha instanceof Error ? falha.message : 'Não foi possível salvar a coleção.');
+    } finally {
+      envioEmAndamento.current = false;
+      setSalvando(false);
+    }
+    if (salva) onCancelar();
+  }
+
+  return (
+    <Modal visible animationType="slide" onRequestClose={cancelar}>
+      <SafeAreaView style={styles.safeArea}>
+        <KeyboardAvoidingView style={styles.container}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+          <ScrollView contentContainerStyle={[styles.conteudo, styles.conteudoColecao]}
+            keyboardShouldPersistTaps="handled">
+            <Text style={styles.titulo} accessibilityRole="header">
+              {colecao ? 'Editar coleção' : 'Nova coleção'}
+            </Text>
+            <Text style={styles.label}>Nome (até 60 caracteres)</Text>
+            <TextInput value={nome} onChangeText={setNome} editable={!salvando}
+              placeholder="Ex.: Biologia" placeholderTextColor={colors.textMuted}
+              accessibilityLabel="Nome da coleção" style={styles.campo} autoCapitalize="sentences" />
+            <View>
+              <Text style={styles.label}>Descrição opcional (até 200 caracteres)</Text>
+              <TextInput value={descricao} onChangeText={setDescricao} editable={!salvando}
+                placeholder="O que você vai estudar?" placeholderTextColor={colors.textMuted}
+                accessibilityLabel="Descrição da coleção" multiline textAlignVertical="top"
+                style={[styles.campo, styles.descricaoColecao]} />
+            </View>
+            {erro ? <Text style={styles.erro} accessibilityRole="alert">{erro}</Text> : null}
+            <View style={styles.acoes}>
+              <Pressable onPress={cancelar} disabled={salvando} accessibilityRole="button"
+                accessibilityLabel="Cancelar edição da coleção" accessibilityState={{ disabled: salvando }}
+                style={[styles.botao, styles.cancelar, salvando && styles.desabilitado]}>
+                <Text style={styles.textoCancelar}>Cancelar</Text>
+              </Pressable>
+              <Pressable onPress={salvar} disabled={salvando} accessibilityRole="button"
+                accessibilityLabel="Salvar coleção" accessibilityState={{ disabled: salvando, busy: salvando }}
+                style={[styles.botao, styles.salvar, salvando && styles.desabilitado]}>
+                <Text style={styles.textoSalvar}>{salvando ? 'Salvando…' : 'Salvar'}</Text>
+              </Pressable>
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
+    </Modal>
+  );
+}
+
+```
+
+───────────────────────────────────────────────────────────────────
+FILE: src/components/cards/ColecaoItem.tsx
+LINHAS: 57 · BYTES: 2793
+───────────────────────────────────────────────────────────────────
+```tsx
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import type { Colecao } from '../../types/cards';
+import { colors } from '../../theme/colors';
+
+type Props = {
+  colecao: Colecao;
+  desabilitado: boolean;
+  onAbrir: () => void;
+  onEditar: () => void;
+  onExcluir: () => void;
+};
+
+export default function ColecaoItem({ colecao, desabilitado, onAbrir, onEditar, onExcluir }: Props) {
+  return (
+    <View style={styles.container}>
+      <Text style={styles.nome} accessibilityRole="header">{colecao.nome}</Text>
+      {colecao.descricao ? <Text style={styles.descricao}>{colecao.descricao}</Text> : null}
+      <Text style={styles.contagem}>
+        {colecao.totalCards} {colecao.totalCards === 1 ? 'card' : 'cards'}
+      </Text>
+      <View style={styles.acoes}>
+        <Pressable onPress={onAbrir} disabled={desabilitado}
+          accessibilityRole="button" accessibilityLabel={`Abrir flashcards da coleção ${colecao.nome}`}
+          accessibilityState={{ disabled: desabilitado }}
+          style={[styles.botao, desabilitado && styles.desabilitado]}>
+          <Text style={styles.editar}>Abrir</Text>
+        </Pressable>
+        <Pressable onPress={onEditar} disabled={desabilitado}
+          accessibilityRole="button" accessibilityLabel={`Editar coleção ${colecao.nome}`}
+          accessibilityState={{ disabled: desabilitado }}
+          style={[styles.botao, desabilitado && styles.desabilitado]}>
+          <Text style={styles.editar}>Editar</Text>
+        </Pressable>
+        <Pressable onPress={onExcluir} disabled={desabilitado}
+          accessibilityRole="button" accessibilityLabel={`Excluir coleção ${colecao.nome}`}
+          accessibilityState={{ disabled: desabilitado }}
+          style={[styles.botao, desabilitado && styles.desabilitado]}>
+          <Text style={styles.excluir}>Excluir</Text>
+        </Pressable>
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { backgroundColor: colors.white, borderRadius: 16, padding: 20, marginBottom: 16,
+    borderWidth: 1, borderColor: colors.border },
+  nome: { fontSize: 22, lineHeight: 30, fontWeight: '700', color: colors.text },
+  descricao: { color: colors.textMuted, fontSize: 16, marginTop: 12, lineHeight: 24 },
+  contagem: { color: colors.textMuted, marginTop: 12, fontSize: 15, lineHeight: 23 },
+  acoes: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, marginTop: 12 },
+  botao: { flexGrow: 1, minHeight: 52, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 16,
+    borderRadius: 10, backgroundColor: colors.primaryBg },
+  editar: { color: colors.primaryDarker, fontSize: 16, lineHeight: 24, fontWeight: '600' },
+  excluir: { color: '#B91C1C', fontSize: 16, lineHeight: 24, fontWeight: '600' },
+  desabilitado: { opacity: 0.5 },
+});
+
+```
+
+───────────────────────────────────────────────────────────────────
+FILE: src/components/cards/Revisao.tsx
+LINHAS: 97 · BYTES: 3549
+───────────────────────────────────────────────────────────────────
+```tsx
+import { useCallback, useEffect, useRef, useState, type RefObject } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import type { Card } from '../../types/cards';
+import {
+  encerrarRevisao, iniciarRevisao, responderCard, revelarResposta,
+  type EstadoRevisao, type NivelRevisao, type OrdemRevisao,
+} from '../../utils/revisao';
+import RevisaoConfig from './RevisaoConfig';
+import RevisaoResumo from './RevisaoResumo';
+import RevisaoSessao from './RevisaoSessao';
+import { revisaoStyles as styles } from './revisaoStyles';
+import { colors } from '../../theme/colors';
+import { confirmarAcao } from '../../utils/alertas';
+
+type Props = {
+  cards: Card[];
+  onVoltar: () => void;
+  controleVoltar: RefObject<(() => void) | null>;
+};
+
+export default function Revisao({ cards, onVoltar, controleVoltar }: Props) {
+  const [nivel, setNivel] = useState<NivelRevisao>('todos');
+  const [ordem, setOrdem] = useState<OrdemRevisao>('sequencial');
+  const [erro, setErro] = useState('');
+  const [estado, setEstado] = useState<EstadoRevisao | null>(null);
+  const estadoAtual = useRef<EstadoRevisao | null>(null);
+
+  const atualizar = useCallback((novo: EstadoRevisao) => {
+    estadoAtual.current = novo;
+    setEstado(novo);
+  }, []);
+
+  const voltar = useCallback(() => {
+    const atual = estadoAtual.current;
+    if (!atual || atual.encerrada) {
+      onVoltar();
+      return;
+    }
+    confirmarAcao({
+      titulo: 'Encerrar revisão?',
+      mensagem: 'Você verá o resumo com os flashcards que ainda ficaram pendentes.',
+      textoCancelar: 'Continuar revisando', textoConfirmar: 'Encerrar', destrutiva: false,
+      onConfirmar: () => {
+        const sessao = estadoAtual.current;
+        if (sessao && !sessao.encerrada) atualizar(encerrarRevisao(sessao));
+      },
+    });
+  }, [atualizar, onVoltar]);
+
+  useEffect(() => {
+    controleVoltar.current = voltar;
+    return () => { controleVoltar.current = null; };
+  }, [controleVoltar, voltar]);
+
+  function iniciar() {
+    if (estadoAtual.current && !estadoAtual.current.encerrada) return;
+    try {
+      atualizar(iniciarRevisao(cards, nivel, ordem));
+      setErro('');
+    } catch (falha) {
+      setErro(falha instanceof Error ? falha.message : 'Não foi possível iniciar a revisão.');
+    }
+  }
+
+  function revelar(cardId: number) {
+    const atual = estadoAtual.current;
+    if (atual) atualizar(revelarResposta(atual, cardId));
+  }
+
+  function responder(cardId: number, acertou: boolean) {
+    const atual = estadoAtual.current;
+    if (atual) atualizar(responderCard(atual, cardId, acertou));
+  }
+
+  return (
+    <View style={styles.container}>
+      <Pressable onPress={voltar} accessibilityRole="button" style={locais.voltar}>
+        <Text style={[styles.textoOpcao, styles.textoVoltar]}>
+          {estado && !estado.encerrada ? 'Encerrar revisão' : '‹ Voltar aos flashcards'}
+        </Text>
+      </Pressable>
+      {!estado ? (
+        <RevisaoConfig cards={cards} nivel={nivel} ordem={ordem} erro={erro}
+          onNivel={setNivel} onOrdem={setOrdem} onIniciar={iniciar} />
+      ) : estado.encerrada ? (
+        <RevisaoResumo estado={estado} onReiniciar={iniciar} onVoltar={onVoltar} />
+      ) : (
+        <RevisaoSessao estado={estado} onRevelar={revelar} onResponder={responder} />
+      )}
+    </View>
+  );
+}
+
+const locais = StyleSheet.create({
+  voltar: { minHeight: 48, paddingHorizontal: 20, paddingVertical: 12,
+    alignItems: 'flex-start', justifyContent: 'center', borderBottomWidth: 1, borderBottomColor: colors.border },
+});
+
+```
+
+───────────────────────────────────────────────────────────────────
+FILE: src/components/cards/RevisaoConfig.tsx
+LINHAS: 74 · BYTES: 3886
+───────────────────────────────────────────────────────────────────
+```tsx
+import { Pressable, ScrollView, Text, View } from 'react-native';
+import type { Card } from '../../types/cards';
+import { filtrarCards, type NivelRevisao, type OrdemRevisao } from '../../utils/revisao';
+import { revisaoStyles as styles } from './revisaoStyles';
+
+type Props = {
+  cards: Card[];
+  nivel: NivelRevisao;
+  ordem: OrdemRevisao;
+  erro: string;
+  onNivel: (nivel: NivelRevisao) => void;
+  onOrdem: (ordem: OrdemRevisao) => void;
+  onIniciar: () => void;
+};
+
+const NIVEIS: { valor: NivelRevisao; texto: string }[] = [
+  { valor: 'todos', texto: 'Todos' }, { valor: 'facil', texto: 'Fácil' },
+  { valor: 'medio', texto: 'Médio' }, { valor: 'dificil', texto: 'Difícil' },
+];
+const ORDENS: { valor: OrdemRevisao; texto: string }[] = [
+  { valor: 'sequencial', texto: 'Sequencial' }, { valor: 'aleatoria', texto: 'Aleatória' },
+];
+
+export default function RevisaoConfig({ cards, nivel, ordem, erro, onNivel, onOrdem, onIniciar }: Props) {
+  const quantidade = filtrarCards(cards, nivel).length;
+  return (
+    <ScrollView style={styles.container} contentContainerStyle={[styles.conteudo, styles.conteudoRevisao]}>
+      <Text style={[styles.titulo, styles.tituloRevisao]} accessibilityRole="header">Configurar revisão</Text>
+      <Text style={[styles.texto, styles.textoRevisao]}>Escolha a ordem e a dificuldade para começar.</Text>
+      <View style={[styles.cartao, styles.blocoConfiguracao]}>
+        <Text style={[styles.label, styles.labelConfiguracao]}>Ordem dos flashcards</Text>
+        <View style={[styles.grupo, styles.grupoConfiguracao]}>
+          {ORDENS.map((opcao) => (
+            <Pressable key={opcao.valor} onPress={() => onOrdem(opcao.valor)} accessibilityRole="button"
+              accessibilityLabel={`Ordem ${opcao.texto}`} accessibilityState={{ selected: ordem === opcao.valor }}
+              style={[styles.botao, styles.opcao, styles.opcaoConfiguracao,
+                ordem === opcao.valor && styles.selecionada]}>
+              <Text style={[ordem === opcao.valor ? styles.textoBotao : styles.textoOpcao, styles.textoConfiguracao]}>
+                {opcao.texto}
+              </Text>
+            </Pressable>
+          ))}
+        </View>
+        <View style={styles.divisaoConfiguracao}>
+          <Text style={[styles.label, styles.labelConfiguracao]}>Dificuldade</Text>
+          <View style={[styles.grupo, styles.grupoConfiguracao]}>
+            {NIVEIS.map((opcao) => (
+              <Pressable key={opcao.valor} onPress={() => onNivel(opcao.valor)} accessibilityRole="button"
+                accessibilityLabel={`Dificuldade ${opcao.texto}`} accessibilityState={{ selected: nivel === opcao.valor }}
+                style={[styles.botao, styles.opcao, styles.opcaoConfiguracao,
+                  nivel === opcao.valor && styles.selecionada]}>
+                <Text style={[nivel === opcao.valor ? styles.textoBotao : styles.textoOpcao, styles.textoConfiguracao]}>
+                  {opcao.texto}
+                </Text>
+              </Pressable>
+            ))}
+          </View>
+        </View>
+      </View>
+      <View style={styles.rodapeConfiguracao}>
+        <Text style={[styles.texto, styles.textoRevisao]}>
+          {quantidade} {quantidade === 1 ? 'flashcard selecionado' : 'flashcards selecionados'}
+        </Text>
+        {quantidade === 0 ? <Text style={styles.erro}>Não há flashcards nesta dificuldade. Escolha outra opção.</Text> : null}
+        {erro ? <Text style={styles.erro} accessibilityRole="alert">{erro}</Text> : null}
+        <Pressable onPress={onIniciar} disabled={quantidade === 0} accessibilityRole="button"
+          accessibilityState={{ disabled: quantidade === 0 }}
+          style={[styles.botao, quantidade === 0 && styles.desabilitado]}>
+          <Text style={[styles.textoBotao, styles.textoAcaoRevisao]}>Iniciar revisão</Text>
+        </Pressable>
+      </View>
+    </ScrollView>
+  );
+}
+
+```
+
+───────────────────────────────────────────────────────────────────
+FILE: src/components/cards/RevisaoResumo.tsx
+LINHAS: 43 · BYTES: 2201
+───────────────────────────────────────────────────────────────────
+```tsx
+import { FlatList, Pressable, Text, View } from 'react-native';
+import { resumirRevisao, type EstadoRevisao } from '../../utils/revisao';
+import { revisaoStyles as styles } from './revisaoStyles';
+
+type Props = { estado: EstadoRevisao; onReiniciar: () => void; onVoltar: () => void };
+
+export default function RevisaoResumo({ estado, onReiniciar, onVoltar }: Props) {
+  const resumo = resumirRevisao(estado);
+  return (
+    <FlatList style={styles.container} contentContainerStyle={styles.conteudo}
+      data={resumo.cardsComErro} keyExtractor={(item) => String(item.id)}
+      ListHeaderComponent={(
+        <View>
+          <Text style={styles.titulo} accessibilityRole="header">
+            {resumo.pendentes > 0 ? 'Sessão encerrada' : 'Revisão concluída!'}
+          </Text>
+          <View style={styles.cartao}>
+            <Text style={styles.texto}>Total de flashcards: {resumo.total}</Text>
+            <Text style={styles.texto}>Concluídos: {resumo.concluidos}</Text>
+            <Text style={styles.texto}>Pendentes: {resumo.pendentes}</Text>
+            <Text style={styles.texto}>Acertos de primeira: {resumo.acertosPrimeira}</Text>
+            <Text style={styles.texto}>Total de tentativas: {resumo.tentativas}</Text>
+          </View>
+          <Pressable onPress={onReiniciar} accessibilityRole="button" style={styles.botao}>
+            <Text style={styles.textoBotao}>Revisar de novo</Text>
+          </Pressable>
+          <Pressable onPress={onVoltar} accessibilityRole="button" style={[styles.botao, styles.opcao]}>
+            <Text style={styles.textoOpcao}>Voltar aos flashcards</Text>
+          </Pressable>
+          <Text style={styles.label}>Flashcards que tiveram erro: {resumo.cardsComErro.length}</Text>
+        </View>
+      )}
+      renderItem={({ item }) => (
+        <View style={styles.cartao}>
+          <Text style={styles.label}>Pergunta</Text>
+          <Text style={styles.texto}>{item.pergunta}</Text>
+          <Text style={styles.label}>Resposta</Text>
+          <Text style={styles.texto}>{item.resposta}</Text>
+        </View>
+      )}
+      ListEmptyComponent={<Text style={styles.texto}>Nenhum flashcard teve erro nesta sessão.</Text>} />
+  );
+}
+
+```
+
+───────────────────────────────────────────────────────────────────
+FILE: src/components/cards/RevisaoSessao.tsx
+LINHAS: 66 · BYTES: 3061
+───────────────────────────────────────────────────────────────────
+```tsx
+import { Pressable, ScrollView, Text, View } from 'react-native';
+import type { EstadoRevisao } from '../../utils/revisao';
+import { revisaoStyles as styles } from './revisaoStyles';
+
+type Props = {
+  estado: EstadoRevisao;
+  onRevelar: (cardId: number) => void;
+  onResponder: (cardId: number, acertou: boolean) => void;
+};
+
+export default function RevisaoSessao({ estado, onRevelar, onResponder }: Props) {
+  const card = estado.fila[0];
+  if (!card) return null;
+  const concluidos = estado.cards.length - estado.fila.length;
+  return (
+    <ScrollView style={styles.container}
+      contentContainerStyle={[styles.conteudo, styles.conteudoRevisao, styles.conteudoSessao]}>
+      <Text style={[styles.titulo, styles.tituloRevisao]} accessibilityRole="header">Revisão dos flashcards</Text>
+      <View style={styles.progressoRevisao} accessibilityLiveRegion="polite">
+        <Text style={styles.progressoTexto}>
+          Concluídos: <Text style={styles.progressoNumero}>{concluidos} de {estado.cards.length}</Text>
+        </Text>
+        <Text style={styles.progressoTexto}>
+          Pendentes: <Text style={styles.progressoNumero}>{estado.fila.length}</Text>
+        </Text>
+      </View>
+      <View style={styles.areaEstudo}>
+        <View style={[styles.cartao, styles.cartaoEstudo]}>
+          <View style={[styles.blocoEstudo, !estado.respostaVisivel && styles.perguntaSemResposta]}>
+            <Text style={[styles.label, styles.labelEstudo]}>Pergunta</Text>
+            <Text style={styles.pergunta}>{card.pergunta}</Text>
+          </View>
+          {estado.respostaVisivel ? (
+            <View style={[styles.blocoEstudo, styles.divisaoEstudo]}>
+              <Text style={[styles.label, styles.labelEstudo]}>Resposta</Text>
+              <Text style={styles.resposta}>{card.resposta}</Text>
+            </View>
+          ) : null}
+        </View>
+      </View>
+      <View style={styles.acoesSessao}>
+        {estado.respostaVisivel ? (
+          <>
+            <Pressable onPress={() => onResponder(card.id, true)} accessibilityRole="button"
+              style={[styles.botao, styles.acaoSessao]}>
+              <Text style={[styles.textoBotao, styles.textoAcaoRevisao]}>Acertei</Text>
+            </Pressable>
+            <Pressable onPress={() => onResponder(card.id, false)} accessibilityRole="button"
+              accessibilityLabel="Errei — repetir depois"
+              style={[styles.botao, styles.opcao, styles.acaoSessao]}>
+              <Text style={[styles.textoOpcao, styles.textoAcaoRevisao]}>Errei</Text>
+            </Pressable>
+          </>
+        ) : (
+          <Pressable onPress={() => onRevelar(card.id)} accessibilityRole="button"
+            style={[styles.botao, styles.acaoSessao]}>
+            <Text style={[styles.textoBotao, styles.textoAcaoRevisao]}>Mostrar resposta</Text>
+          </Pressable>
+        )}
+      </View>
+      {estado.respostaVisivel ? (
+        <Text style={styles.dicaRevisao}>Ao marcar “Errei”, o flashcard volta ao final da fila.</Text>
+      ) : null}
+    </ScrollView>
+  );
+}
+
+```
+
+───────────────────────────────────────────────────────────────────
+FILE: src/components/cards/formStyles.ts
+LINHAS: 28 · BYTES: 1637
+───────────────────────────────────────────────────────────────────
+```ts
+import { StyleSheet } from 'react-native';
+import { colors } from '../../theme/colors';
+
+export const formStyles = StyleSheet.create({
+  safeArea: { flex: 1, backgroundColor: colors.primaryBg },
+  container: { flex: 1, backgroundColor: colors.primaryBg },
+  conteudo: { flexGrow: 1, width: '100%', maxWidth: 960, alignSelf: 'center',
+    padding: 20, paddingBottom: 24 },
+  conteudoColecao: { maxWidth: 680, justifyContent: 'center' },
+  titulo: { fontSize: 28, lineHeight: 36, fontWeight: '700', color: colors.text, marginBottom: 28 },
+  label: { fontSize: 16, lineHeight: 24, color: colors.text, fontWeight: '600', marginBottom: 8 },
+  campo: { backgroundColor: colors.white, color: colors.text, borderWidth: 1,
+    borderColor: colors.border, borderRadius: 12, padding: 16, minHeight: 60,
+    fontSize: 18, lineHeight: 28, marginBottom: 20 },
+  grupoExpansivel: { flexGrow: 1 },
+  descricao: { minHeight: 160 },
+  campoExpansivel: { flexGrow: 1 },
+  descricaoColecao: { height: 160, minHeight: 160 },
+  erro: { color: '#B91C1C', marginBottom: 16, lineHeight: 21 },
+  acoes: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, paddingTop: 8 },
+  botao: { flexGrow: 1, minHeight: 56, padding: 16, alignItems: 'center',
+    justifyContent: 'center', borderRadius: 12 },
+  cancelar: { backgroundColor: colors.white, borderWidth: 1, borderColor: colors.border },
+  salvar: { backgroundColor: colors.primaryDark },
+  textoCancelar: { color: colors.primaryDarker, fontSize: 16, lineHeight: 24, fontWeight: '700' },
+  textoSalvar: { color: colors.white, fontSize: 16, lineHeight: 24, fontWeight: '700' },
+  desabilitado: { opacity: 0.5 },
+});
+
+```
+
+───────────────────────────────────────────────────────────────────
+FILE: src/components/cards/revisaoStyles.ts
+LINHAS: 51 · BYTES: 3547
+───────────────────────────────────────────────────────────────────
+```ts
+import { StyleSheet } from 'react-native';
+import { colors } from '../../theme/colors';
+
+export const revisaoStyles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: colors.primaryBg },
+  conteudo: { flexGrow: 1, width: '100%', maxWidth: 960, alignSelf: 'center',
+    padding: 20, paddingBottom: 24 },
+  titulo: { fontSize: 28, lineHeight: 36, fontWeight: '700', color: colors.text, marginBottom: 20 },
+  texto: { fontSize: 17, color: colors.text, lineHeight: 26, marginBottom: 16 },
+  label: { fontSize: 16, lineHeight: 24, color: colors.textMuted, fontWeight: '600', marginBottom: 12 },
+  grupo: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 20 },
+  botao: { minHeight: 56, padding: 16, borderRadius: 12, alignItems: 'center',
+    justifyContent: 'center', backgroundColor: colors.primaryDark, marginBottom: 12 },
+  opcao: { flexGrow: 1, minWidth: 96, marginBottom: 0, backgroundColor: colors.white,
+    borderWidth: 1, borderColor: colors.border },
+  selecionada: { backgroundColor: colors.primaryDark },
+  textoBotao: { color: colors.white, fontSize: 16, lineHeight: 24, fontWeight: '700', textAlign: 'center' },
+  textoOpcao: { color: colors.primaryDarker, fontSize: 16, lineHeight: 24, fontWeight: '600', textAlign: 'center' },
+  cartao: { padding: 24, borderRadius: 16, backgroundColor: colors.white,
+    borderWidth: 1, borderColor: colors.border, marginBottom: 16 },
+  conteudoRevisao: { maxWidth: 760 },
+  conteudoSessao: { justifyContent: 'center' },
+  tituloRevisao: { fontSize: 22, lineHeight: 30, fontWeight: '600', marginBottom: 8 },
+  textoRevisao: { fontSize: 15, lineHeight: 24, fontWeight: '400', color: colors.textMuted, marginBottom: 24 },
+  textoVoltar: { fontSize: 14, lineHeight: 20, fontWeight: '500' },
+  progressoRevisao: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between',
+    gap: 12, marginBottom: 16 },
+  progressoTexto: { fontSize: 14, lineHeight: 22, color: colors.textMuted },
+  progressoNumero: { fontWeight: '600', color: colors.text },
+  areaEstudo: { paddingTop: 8, paddingBottom: 16 },
+  cartaoEstudo: { padding: 20, marginBottom: 0 },
+  blocoEstudo: { minHeight: 96, paddingVertical: 8 },
+  perguntaSemResposta: { minHeight: 160 },
+  divisaoEstudo: { borderTopWidth: 1, borderTopColor: colors.border, paddingTop: 20, marginTop: 20 },
+  labelEstudo: { fontSize: 13, lineHeight: 18, fontWeight: '600', letterSpacing: 0.2, marginBottom: 12 },
+  acoesSessao: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, paddingTop: 8 },
+  acaoSessao: { flexGrow: 1, flexBasis: '45%', minWidth: 0, marginBottom: 0 },
+  textoAcaoRevisao: { fontSize: 16, lineHeight: 24, fontWeight: '600' },
+  dicaRevisao: { fontSize: 13, lineHeight: 20, color: colors.textMuted, marginTop: 12 },
+  blocoConfiguracao: { padding: 20, marginBottom: 0 },
+  divisaoConfiguracao: { borderTopWidth: 1, borderTopColor: colors.border, paddingTop: 20, marginTop: 20 },
+  grupoConfiguracao: { marginBottom: 0 },
+  labelConfiguracao: { fontSize: 14, lineHeight: 20, fontWeight: '600' },
+  opcaoConfiguracao: { flexBasis: '45%', minWidth: 0, minHeight: 52, padding: 12 },
+  textoConfiguracao: { fontSize: 16, lineHeight: 24, fontWeight: '500' },
+  rodapeConfiguracao: { paddingTop: 24 },
+  pergunta: { fontSize: 20, lineHeight: 30, color: colors.text, fontWeight: '500', textAlign: 'left' },
+  resposta: { fontSize: 20, lineHeight: 30, color: colors.text, fontWeight: '400', textAlign: 'left' },
+  erro: { color: '#B91C1C', lineHeight: 22, marginBottom: 16 },
+  desabilitado: { opacity: 0.5 },
+});
+
+```
+
+───────────────────────────────────────────────────────────────────
+FILE: src/database/cardsRepository.ts
+LINHAS: 105 · BYTES: 3669
+───────────────────────────────────────────────────────────────────
+```ts
+import type { Card, Colecao, DadosCard, DadosColecao } from '../types/cards';
+import { validarCard, validarColecao, validarId } from '../utils/validacao';
+import { obterBanco } from './connection';
+
+const CONSULTA_COLECOES = `
+  SELECT c.id, c.nome, c.descricao, c.criada_em AS criadaEm,
+         COUNT(card.id) AS totalCards
+  FROM colecoes c
+  LEFT JOIN cards card ON card.colecao_id = c.id
+`;
+
+export async function listarColecoes(): Promise<Colecao[]> {
+  const banco = await obterBanco();
+  return banco.getAllAsync<Colecao>(`
+    ${CONSULTA_COLECOES}
+    GROUP BY c.id
+    ORDER BY c.criada_em ASC, c.id ASC
+  `);
+}
+
+export async function obterColecao(id: number): Promise<Colecao | null> {
+  validarId(id);
+  const banco = await obterBanco();
+  return banco.getFirstAsync<Colecao>(
+    `${CONSULTA_COLECOES} WHERE c.id = ? GROUP BY c.id`,
+    [id],
+  );
+}
+
+export async function criarColecao(dados: DadosColecao): Promise<number> {
+  const { nome, descricao } = validarColecao(dados);
+  const banco = await obterBanco();
+  const resultado = await banco.runAsync(
+    'INSERT INTO colecoes (nome, descricao, criada_em) VALUES (?, ?, ?)',
+    [nome, descricao, new Date().toISOString()],
+  );
+  return resultado.lastInsertRowId;
+}
+
+export async function atualizarColecao(id: number, dados: DadosColecao): Promise<boolean> {
+  validarId(id);
+  const { nome, descricao } = validarColecao(dados);
+  const banco = await obterBanco();
+  const resultado = await banco.runAsync(
+    'UPDATE colecoes SET nome = ?, descricao = ? WHERE id = ?',
+    [nome, descricao, id],
+  );
+  return resultado.changes > 0;
+}
+
+export async function excluirColecao(id: number): Promise<boolean> {
+  validarId(id);
+  const banco = await obterBanco();
+  const resultado = await banco.runAsync('DELETE FROM colecoes WHERE id = ?', [id]);
+  return resultado.changes > 0;
+}
+
+const CONSULTA_CARDS = `
+  SELECT id, colecao_id AS colecaoId, pergunta, resposta, dificuldade,
+         criado_em AS criadoEm, atualizado_em AS atualizadoEm
+  FROM cards
+`;
+
+export async function listarCards(colecaoId: number): Promise<Card[]> {
+  validarId(colecaoId);
+  const banco = await obterBanco();
+  return banco.getAllAsync<Card>(
+    `${CONSULTA_CARDS} WHERE colecao_id = ? ORDER BY criado_em ASC, id ASC`,
+    [colecaoId],
+  );
+}
+
+export async function criarCard(colecaoId: number, dados: DadosCard): Promise<number> {
+  validarId(colecaoId);
+  const { pergunta, resposta, dificuldade } = validarCard(dados);
+  const banco = await obterBanco();
+  const agora = new Date().toISOString();
+  const resultado = await banco.runAsync(
+    `INSERT INTO cards (colecao_id, pergunta, resposta, dificuldade, criado_em, atualizado_em)
+     VALUES (?, ?, ?, ?, ?, ?)`,
+    [colecaoId, pergunta, resposta, dificuldade, agora, agora],
+  );
+  return resultado.lastInsertRowId;
+}
+
+export async function atualizarCard(colecaoId: number, id: number, dados: DadosCard): Promise<boolean> {
+  validarId(colecaoId);
+  validarId(id);
+  const { pergunta, resposta, dificuldade } = validarCard(dados);
+  const banco = await obterBanco();
+  const resultado = await banco.runAsync(
+    `UPDATE cards SET pergunta = ?, resposta = ?, dificuldade = ?, atualizado_em = ?
+     WHERE id = ? AND colecao_id = ?`,
+    [pergunta, resposta, dificuldade, new Date().toISOString(), id, colecaoId],
+  );
+  return resultado.changes > 0;
+}
+
+export async function excluirCard(colecaoId: number, id: number): Promise<boolean> {
+  validarId(colecaoId);
+  validarId(id);
+  const banco = await obterBanco();
+  const resultado = await banco.runAsync('DELETE FROM cards WHERE id = ? AND colecao_id = ?', [id, colecaoId]);
+  return resultado.changes > 0;
+}
+
+```
+
+───────────────────────────────────────────────────────────────────
+FILE: src/database/connection.ts
+LINHAS: 49 · BYTES: 1524
+───────────────────────────────────────────────────────────────────
+```ts
+import { openDatabaseAsync, type SQLiteDatabase } from 'expo-sqlite';
+import { Platform } from 'react-native';
+
+const NOME_BANCO = 'focustimer.db';
+let conexao: Promise<SQLiteDatabase> | null = null;
+
+async function abrirBanco(): Promise<SQLiteDatabase> {
+  if (Platform.OS === 'web' && (!globalThis.isSecureContext || !navigator.storage?.getDirectory)) {
+    throw new Error('Use localhost ou HTTPS em um navegador com suporte a armazenamento local.');
+  }
+  const banco = await openDatabaseAsync(NOME_BANCO);
+  try {
+    await banco.execAsync(`
+      PRAGMA foreign_keys = ON;
+
+      CREATE TABLE IF NOT EXISTS colecoes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nome TEXT NOT NULL,
+        descricao TEXT,
+        criada_em TEXT NOT NULL
+      );
+
+      CREATE TABLE IF NOT EXISTS cards (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        colecao_id INTEGER NOT NULL REFERENCES colecoes(id) ON DELETE CASCADE,
+        pergunta TEXT NOT NULL,
+        resposta TEXT NOT NULL,
+        dificuldade TEXT NOT NULL DEFAULT 'medio',
+        criado_em TEXT NOT NULL,
+        atualizado_em TEXT NOT NULL
+      );
+    `);
+    return banco;
+  } catch (erro) {
+    await banco.closeAsync().catch(() => undefined);
+    throw erro;
+  }
+}
+
+export function obterBanco(): Promise<SQLiteDatabase> {
+  if (!conexao) {
+    conexao = abrirBanco().catch((erro: unknown) => {
+      // Uma falha temporária não deve impedir todas as próximas tentativas.
+      conexao = null;
+      throw erro;
+    });
+  }
+  return conexao;
+}
+
+```
+
+───────────────────────────────────────────────────────────────────
+FILE: src/navigation/TabNavigator.tsx
+LINHAS: 20 · BYTES: 946
+───────────────────────────────────────────────────────────────────
+```tsx
+import React from 'react';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import CustomTabBar from '../components/CustomTabBar';
+import TimerScreen from '../routes/timer/TimerScreen';
+import CardsScreen from '../routes/cards/CardsScreen';
+import AgendaScreen from '../routes/agenda/AgendaScreen';
+import ConfiguracoesScreen from '../routes/configuracoes/ConfiguracoesScreen';
+
+const Tab = createBottomTabNavigator();
+
+export default function TabNavigator() {
+  return (
+    <Tab.Navigator initialRouteName="Timer" tabBar={(props) => <CustomTabBar {...props} />} screenOptions={{ headerShown: false }}>
+      <Tab.Screen name="Cards" component={CardsScreen} />
+      <Tab.Screen name="Timer" component={TimerScreen} />
+      <Tab.Screen name="Agenda" component={AgendaScreen} />
+      <Tab.Screen name="Configuracoes" component={ConfiguracoesScreen} options={{ tabBarButton: () => null }} />
+    </Tab.Navigator>
+  );
+}
+
+```
+
+───────────────────────────────────────────────────────────────────
+FILE: src/routes/agenda/AgendaScreen.tsx
+LINHAS: 588 · BYTES: 17159
+───────────────────────────────────────────────────────────────────
+```tsx
+import React, { useCallback, useState } from 'react';
+import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { useFocusEffect } from '@react-navigation/native';
+import Header from '../../components/Header';
+import { colors } from '../../theme/colors';
+import { formatarTempoCurto } from '../../utils/tempo';
+import { Task } from '../../types';
+import { loadTasks, saveTasks } from '../../storage/tasks';
+
+import TarefaModal from './TarefaModal';
+
+const MIN_POMODORO = 25; // igual ao timer
+
+const MESES = [
+  'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+  'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro',
+];
+const DIAS_SEMANA = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
+const NOMES_DIAS = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
+
+// quanto mais pomodoro no dia, mais escuro fica o verde
+const CORES = [colors.white, colors.primaryTint, colors.primaryLight, colors.primary, colors.primaryDarker];
+
+const prioridades: Record<number, string> = { 1: 'Baixa', 2: 'Média', 3: 'Alta', 4: 'Finalizada' };
+const coresPrioridade: Record<number, string> = {
+  1: colors.primaryLight,
+  2: colors.pause,
+  3: '#EF4444',
+  4: colors.textLight,
+};
+
+// deixa no mesmo formato que a data é salva na tarefa (AAAA-MM-DD)
+function formatarData(ano: number, mes: number, dia: number) {
+  const m = String(mes + 1).padStart(2, '0');
+  const d = String(dia).padStart(2, '0');
+  return `${ano}-${m}-${d}`;
+}
+
+function getNivel(pomodoros: number) {
+  if (pomodoros === 0) return 0;
+  if (pomodoros === 1) return 1;
+  if (pomodoros <= 3) return 2;
+  if (pomodoros <= 5) return 3;
+  return 4;
+}
+
+function formatarMinutos(min: number) {
+  if (min === 0) return '0min';
+  return formatarTempoCurto(min * 60);
+}
+
+export default function AgendaScreen() {
+  const hoje = new Date();
+  const dataHoje = formatarData(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
+
+  const [ano, setAno] = useState(hoje.getFullYear());
+  const [mes, setMes] = useState(hoje.getMonth());
+  const [diaSelecionado, setDiaSelecionado] = useState(dataHoje);
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [erro, setErro] = useState('');
+  const [modalVisivel, setModalVisivel] = useState(false);
+  const [tarefaEditando, setTarefaEditando] = useState<Task | null>(null);
+
+  // carrega de novo toda vez que abre a aba, pra pegar o que mudou nas outras telas
+  useFocusEffect(
+    useCallback(() => {
+      loadTasks()
+        .then((lista) => setTasks(lista))
+        .catch((e) => {
+          console.error(e);
+          setErro('Não foi possível carregar as tarefas.');
+        });
+    }, [])
+  );
+
+  function tarefasDoDia(data: string) {
+    return tasks.filter((t) => t.date === data);
+  }
+
+  function pomodorosDoDia(data: string) {
+    let total = 0;
+    tarefasDoDia(data).forEach((t) => {
+      total += t.completedPomodoros;
+    });
+    return total;
+  }
+
+  function trocarMes(novoMes: number, novoAno: number) {
+    setMes(novoMes);
+    setAno(novoAno);
+    setDiaSelecionado(formatarData(novoAno, novoMes, 1));
+  }
+
+  function mesAnterior() {
+    if (mes === 0) trocarMes(11, ano - 1);
+    else trocarMes(mes - 1, ano);
+  }
+
+  function proximoMes() {
+    if (mes === 11) trocarMes(0, ano + 1);
+    else trocarMes(mes + 1, ano);
+  }
+
+  function irParaHoje() {
+    setMes(hoje.getMonth());
+    setAno(hoje.getFullYear());
+    setDiaSelecionado(dataHoje);
+  }
+
+  // atualiza a tela na hora e salva no AsyncStorage
+  async function salvarLista(novaLista: Task[]) {
+    setTasks(novaLista);
+    try {
+      await saveTasks(novaLista);
+    } catch (e) {
+      console.error(e);
+      setErro('Não foi possível salvar as alterações.');
+    }
+  }
+
+  function concluirTarefa(task: Task) {
+    salvarLista(tasks.map((t) => (t.id === task.id ? { ...t, status: !t.status } : t)));
+  }
+
+  function novaTarefa() {
+    setTarefaEditando(null);
+    setModalVisivel(true);
+  }
+
+  function editarTarefa(task: Task) {
+    setTarefaEditando(task);
+    setModalVisivel(true);
+  }
+
+  function salvarTarefa(task: Task) {
+    const jaExiste = tasks.some((t) => t.id === task.id);
+    if (jaExiste) {
+      salvarLista(tasks.map((t) => (t.id === task.id ? task : t)));
+    } else {
+      salvarLista([...tasks, task]);
+    }
+    setModalVisivel(false);
+  }
+
+  function excluirTarefa(id: string) {
+    salvarLista(tasks.filter((t) => t.id !== id));
+    setModalVisivel(false);
+  }
+
+  // monta o calendário: null = quadrado vazio
+  const primeiroDia = new Date(ano, mes, 1).getDay();
+  const totalDias = new Date(ano, mes + 1, 0).getDate();
+  const dias: (number | null)[] = [];
+  for (let i = 0; i < primeiroDia; i++) dias.push(null);
+  for (let d = 1; d <= totalDias; d++) dias.push(d);
+  while (dias.length % 7 !== 0) dias.push(null);
+
+  const semanas: (number | null)[][] = [];
+  for (let i = 0; i < dias.length; i += 7) {
+    semanas.push(dias.slice(i, i + 7));
+  }
+
+  // resumo do mês
+  const prefixoMes = formatarData(ano, mes, 1).slice(0, 7); // ex: "2026-11"
+  const tarefasDoMes = tasks.filter((t) => t.date.startsWith(prefixoMes));
+  let minutosMes = 0;
+  const diasEstudados: string[] = [];
+  tarefasDoMes.forEach((t) => {
+    minutosMes += t.completedPomodoros * MIN_POMODORO;
+    if (t.completedPomodoros > 0 && !diasEstudados.includes(t.date)) {
+      diasEstudados.push(t.date);
+    }
+  });
+  const concluidas = tarefasDoMes.filter((t) => t.status).length;
+
+  // dia selecionado (pendentes primeiro)
+  const listaDia = tarefasDoDia(diaSelecionado).sort((a, b) => Number(a.status) - Number(b.status));
+  const minutosDia = pomodorosDoDia(diaSelecionado) * MIN_POMODORO;
+  const [a, m, d] = diaSelecionado.split('-').map(Number);
+  const nomeDia = diaSelecionado === dataHoje ? 'Hoje' : NOMES_DIAS[new Date(a, m - 1, d).getDay()];
+  const tituloDia = `${nomeDia}, ${d} de ${MESES[m - 1].toLowerCase()}`;
+
+  const mostrarBotaoHoje = diaSelecionado !== dataHoje;
+
+  return (
+    <View style={styles.container}>
+      <Header subtitle="Agenda de estudos" />
+
+      <ScrollView contentContainerStyle={styles.scroll}>
+        <View style={styles.mesHeader}>
+          <Pressable onPress={mesAnterior} style={styles.seta} hitSlop={8} accessibilityLabel="Mês anterior">
+            <Ionicons name="chevron-back" size={20} color={colors.primaryDark} />
+          </Pressable>
+
+          <View style={{ flex: 1, alignItems: 'center' }}>
+            <Text style={styles.mesTitulo}>{MESES[mes]} {ano}</Text>
+            {mostrarBotaoHoje && (
+              <Pressable onPress={irParaHoje} hitSlop={6}>
+                <Text style={styles.linkHoje}>Voltar para hoje</Text>
+              </Pressable>
+            )}
+          </View>
+
+          <Pressable onPress={proximoMes} style={styles.seta} hitSlop={8} accessibilityLabel="Próximo mês">
+            <Ionicons name="chevron-forward" size={20} color={colors.primaryDark} />
+          </Pressable>
+        </View>
+
+        <View style={styles.card}>
+          <View style={styles.linha}>
+            {DIAS_SEMANA.map((letra, i) => (
+              <Text key={i} style={styles.diaSemana}>{letra}</Text>
+            ))}
+          </View>
+
+          {semanas.map((semana, i) => (
+            <View key={i} style={styles.linha}>
+              {semana.map((dia, j) => {
+                if (dia === null) return <View key={j} style={styles.celula} />;
+
+                const data = formatarData(ano, mes, dia);
+                const nivel = getNivel(pomodorosDoDia(data));
+                const temPendente = tarefasDoDia(data).some((t) => !t.status);
+                const escuro = nivel >= 3;
+
+                return (
+                  <View key={j} style={styles.celula}>
+                    <Pressable
+                      onPress={() => setDiaSelecionado(data)}
+                      style={[
+                        styles.dia,
+                        { backgroundColor: CORES[nivel] },
+                        nivel === 0 && styles.diaSemEstudo,
+                        data === dataHoje && styles.diaHoje,
+                        data === diaSelecionado && styles.diaSelecionado,
+                      ]}
+                    >
+                      <Text style={[styles.diaTexto, escuro && { color: colors.white }]}>{dia}</Text>
+                      {temPendente && (
+                        <View style={[styles.ponto, escuro && { backgroundColor: colors.white }]} />
+                      )}
+                    </Pressable>
+                  </View>
+                );
+              })}
+            </View>
+          ))}
+
+          <View style={styles.legenda}>
+            <Text style={styles.legendaTexto}>Menos</Text>
+            {CORES.map((cor, i) => (
+              <View key={i} style={[styles.legendaQuadrado, { backgroundColor: cor }, i === 0 && styles.diaSemEstudo]} />
+            ))}
+            <Text style={styles.legendaTexto}>Mais</Text>
+          </View>
+        </View>
+
+        {erro !== '' && <Text style={styles.erro}>{erro}</Text>}
+
+        <View style={styles.resumo}>
+          <View style={styles.resumoItem}>
+            <Ionicons name="time-outline" size={18} color={colors.primaryDark} />
+            <Text style={styles.resumoValor}>{formatarMinutos(minutosMes)}</Text>
+            <Text style={styles.resumoLabel}>estudado</Text>
+          </View>
+          <View style={styles.resumoItem}>
+            <Ionicons name="flame-outline" size={18} color={colors.primaryDark} />
+            <Text style={styles.resumoValor}>{diasEstudados.length}</Text>
+            <Text style={styles.resumoLabel}>dias ativos</Text>
+          </View>
+          <View style={styles.resumoItem}>
+            <Ionicons name="checkmark-done-outline" size={18} color={colors.primaryDark} />
+            <Text style={styles.resumoValor}>{concluidas}/{tarefasDoMes.length}</Text>
+            <Text style={styles.resumoLabel}>tarefas</Text>
+          </View>
+        </View>
+
+        <View style={styles.card}>
+          <View style={styles.diaHeader}>
+            <Text style={styles.diaTitulo}>{tituloDia}</Text>
+            {minutosDia > 0 && (
+              <View style={styles.badge}>
+                <Ionicons name="timer-outline" size={13} color={colors.primaryDarker} />
+                <Text style={styles.badgeTexto}>{formatarMinutos(minutosDia)}</Text>
+              </View>
+            )}
+          </View>
+
+          {listaDia.length === 0 && (
+            <View style={styles.vazio}>
+              <Ionicons name="calendar-clear-outline" size={32} color={colors.primaryTint} />
+              <Text style={styles.vazioTexto}>Nenhuma tarefa para este dia.</Text>
+            </View>
+          )}
+
+          {listaDia.map((task) => (
+            <View key={task.id} style={styles.tarefa}>
+              <Pressable
+                onPress={() => concluirTarefa(task)}
+                hitSlop={8}
+                accessibilityLabel={task.status ? `Desmarcar ${task.title}` : `Concluir ${task.title}`}
+              >
+                <Ionicons
+                  name={task.status ? 'checkmark-circle' : 'ellipse-outline'}
+                  size={24}
+                  color={task.status ? colors.primary : colors.textLight}
+                />
+              </Pressable>
+
+              <Pressable style={{ flex: 1 }} onPress={() => editarTarefa(task)}>
+                <Text style={task.status ? styles.tarefaConcluida : styles.tarefaTitulo} numberOfLines={1}>
+                  {task.title}
+                </Text>
+                <Text style={styles.tarefaSub}>
+                  {task.className} - {task.completedPomodoros}/{task.pomodoroAmount} pomodoros
+                </Text>
+              </Pressable>
+
+              <View style={[styles.prioridade, { backgroundColor: coresPrioridade[task.priority] }]}>
+                <Text style={styles.prioridadeTexto}>{prioridades[task.priority]}</Text>
+              </View>
+
+              <Pressable
+                onPress={() => editarTarefa(task)}
+                style={styles.botaoEditar}
+                hitSlop={6}
+                accessibilityLabel={`Editar ${task.title}`}
+              >
+                <Ionicons name="pencil" size={15} color={colors.primaryDark} />
+              </Pressable>
+            </View>
+          ))}
+
+          <Pressable onPress={novaTarefa} style={styles.botaoAdicionar}>
+            <Ionicons name="add" size={18} color={colors.primaryDark} />
+            <Text style={styles.textoAdicionar}>Adicionar tarefa</Text>
+          </Pressable>
+        </View>
+      </ScrollView>
+
+      <TarefaModal
+        visible={modalVisivel}
+        tarefa={tarefaEditando}
+        data={diaSelecionado}
+        onFechar={() => setModalVisivel(false)}
+        onSalvar={salvarTarefa}
+        onExcluir={excluirTarefa}
+      />
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.primaryBg,
+  },
+  scroll: {
+    padding: 16,
+    paddingBottom: 32,
+    gap: 14,
+  },
+
+  // topo com o mês
+  mesHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  seta: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: colors.border,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  mesTitulo: {
+    fontSize: 18,
+    fontWeight: '800',
+    color: colors.text,
+  },
+  linkHoje: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: colors.primaryDark,
+    marginTop: 2,
+    textDecorationLine: 'underline',
+  },
+
+  // calendário
+  card: {
+    backgroundColor: colors.white,
+    borderRadius: 16,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  linha: {
+    flexDirection: 'row',
+  },
+  diaSemana: {
+    flex: 1,
+    textAlign: 'center',
+    fontSize: 12,
+    fontWeight: '700',
+    color: colors.textMuted,
+    paddingBottom: 6,
+  },
+  celula: {
+    flex: 1,
+    aspectRatio: 1,
+    padding: 3,
+  },
+  dia: {
+    flex: 1,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  diaSemEstudo: {
+    borderWidth: 1,
+    borderColor: colors.grayStroke,
+  },
+  diaHoje: {
+    borderWidth: 2,
+    borderColor: colors.primaryDark,
+  },
+  diaSelecionado: {
+    borderWidth: 2.5,
+    borderColor: colors.pause,
+  },
+  diaTexto: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: colors.text,
+  },
+  ponto: {
+    width: 5,
+    height: 5,
+    borderRadius: 3,
+    backgroundColor: colors.pause,
+    marginTop: 2,
+  },
+  legenda: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 4,
+    marginTop: 10,
+  },
+  legendaTexto: {
+    fontSize: 11,
+    color: colors.textMuted,
+    marginHorizontal: 2,
+  },
+  legendaQuadrado: {
+    width: 14,
+    height: 14,
+    borderRadius: 4,
+  },
+  erro: {
+    color: '#DC2626',
+    textAlign: 'center',
+  },
+
+  // resumo do mês
+  resumo: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  resumoItem: {
+    flex: 1,
+    backgroundColor: colors.white,
+    borderRadius: 14,
+    paddingVertical: 12,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  resumoValor: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: colors.text,
+  },
+  resumoLabel: {
+    fontSize: 11,
+    color: colors.textMuted,
+  },
+
+  // lista do dia
+  diaHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+  },
+  diaTitulo: {
+    fontSize: 15,
+    fontWeight: '800',
+    color: colors.text,
+  },
+  badge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: colors.primaryBg,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  badgeTexto: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: colors.primaryDarker,
+  },
+  vazio: {
+    alignItems: 'center',
+    paddingVertical: 20,
+    gap: 6,
+  },
+  vazioTexto: {
+    fontSize: 13,
+    color: colors.textLight,
+  },
+  tarefa: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    paddingVertical: 10,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
+  },
+  tarefaTitulo: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: colors.text,
+  },
+  tarefaConcluida: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: colors.textLight,
+    textDecorationLine: 'line-through',
+  },
+  tarefaSub: {
+    fontSize: 12,
+    color: colors.textMuted,
+    marginTop: 2,
+  },
+  prioridade: {
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 10,
+  },
+  prioridadeTexto: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: colors.white,
+  },
+  botaoEditar: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: colors.primaryBg,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  botaoAdicionar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    marginTop: 8,
+    paddingVertical: 12,
+    borderRadius: 12,
+    borderWidth: 1.5,
+    borderStyle: 'dashed',
+    borderColor: colors.primaryLight,
+    backgroundColor: colors.primaryBg,
+  },
+  textoAdicionar: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: colors.primaryDark,
+  },
+});
+
+```
+
+───────────────────────────────────────────────────────────────────
+FILE: src/routes/agenda/TarefaModal.tsx
+LINHAS: 373 · BYTES: 11065
+───────────────────────────────────────────────────────────────────
+```tsx
+import React, { useEffect, useState } from 'react';
+import {
+  View, Text, StyleSheet, Pressable, Modal, TextInput, ScrollView,
+  KeyboardAvoidingView, Platform,
+} from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { colors } from '../../theme/colors';
+import { Task } from '../../types';
+import { createTask } from '../../storage/tasks';
+
+type Props = {
+  visible: boolean;
+  tarefa: Task | null; // null = tarefa nova
+  data: string; // dia selecionado na agenda (AAAA-MM-DD)
+  onFechar: () => void;
+  onSalvar: (tarefa: Task) => void;
+  onExcluir: (id: string) => void;
+};
+
+const OPCOES_PRIORIDADE = [
+  { valor: 1, label: 'Baixa' },
+  { valor: 2, label: 'Média' },
+  { valor: 3, label: 'Alta' },
+];
+
+export default function TarefaModal({ visible, tarefa, data, onFechar, onSalvar, onExcluir }: Props) {
+  const [titulo, setTitulo] = useState('');
+  const [materia, setMateria] = useState('');
+  const [prioridade, setPrioridade] = useState(2);
+  const [pomodoros, setPomodoros] = useState(1);
+  const [feitos, setFeitos] = useState(0);
+  const [notas, setNotas] = useState('');
+  const [erro, setErro] = useState('');
+  const [confirmarExclusao, setConfirmarExclusao] = useState(false);
+
+  // toda vez que abre, preenche com a tarefa (editar) ou limpa (nova)
+  useEffect(() => {
+    if (!visible) return;
+    setTitulo(tarefa ? tarefa.title : '');
+    setMateria(tarefa ? tarefa.className : '');
+    setPrioridade(tarefa ? tarefa.priority : 2);
+    setPomodoros(tarefa ? tarefa.pomodoroAmount : 1);
+    setFeitos(tarefa ? tarefa.completedPomodoros : 0);
+    setNotas(tarefa ? tarefa.notes : '');
+    setErro('');
+    setConfirmarExclusao(false);
+  }, [visible, tarefa]);
+
+  function mudarPomodoros(delta: number) {
+    const novo = Math.max(1, pomodoros + delta);
+    setPomodoros(novo);
+    if (feitos > novo) setFeitos(novo);
+  }
+
+  function mudarFeitos(delta: number) {
+    setFeitos(Math.min(pomodoros, Math.max(0, feitos + delta)));
+  }
+
+  function salvar() {
+    if (titulo.trim() === '') {
+      setErro('Digite um título para a tarefa.');
+      return;
+    }
+
+    const dados = {
+      title: titulo.trim(),
+      className: materia.trim() || 'Geral',
+      priority: prioridade,
+      pomodoroAmount: pomodoros,
+      completedPomodoros: feitos,
+      notes: notas.trim(),
+    };
+
+    if (tarefa) {
+      onSalvar({ ...tarefa, ...dados });
+    } else {
+      onSalvar(createTask({ ...dados, date: data, status: false }));
+    }
+  }
+
+  function excluir() {
+    if (!tarefa) return;
+    // primeiro clique pede confirmação, o segundo exclui
+    if (!confirmarExclusao) {
+      setConfirmarExclusao(true);
+      return;
+    }
+    onExcluir(tarefa.id);
+  }
+
+  return (
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={onFechar}>
+      <KeyboardAvoidingView
+        style={styles.fundo}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      >
+        <View style={styles.caixa}>
+          <View style={styles.header}>
+            <Text style={styles.titulo}>{tarefa ? 'Editar tarefa' : 'Nova tarefa'}</Text>
+            <Pressable onPress={onFechar} style={styles.botaoFechar} hitSlop={8} accessibilityLabel="Fechar">
+              <Ionicons name="close" size={18} color={colors.textMuted} />
+            </Pressable>
+          </View>
+
+          <ScrollView contentContainerStyle={styles.conteudo} keyboardShouldPersistTaps="handled">
+            <Text style={styles.label}>Título</Text>
+            <TextInput
+              style={styles.input}
+              value={titulo}
+              onChangeText={(texto) => {
+                setTitulo(texto);
+                setErro('');
+              }}
+              placeholder="Ex: Revisar capítulo 3"
+              placeholderTextColor={colors.textLight}
+            />
+            {erro !== '' && <Text style={styles.erro}>{erro}</Text>}
+
+            <Text style={styles.label}>Matéria</Text>
+            <TextInput
+              style={styles.input}
+              value={materia}
+              onChangeText={setMateria}
+              placeholder="Ex: Matemática"
+              placeholderTextColor={colors.textLight}
+            />
+
+            <Text style={styles.label}>Prioridade</Text>
+            <View style={styles.linhaBotoes}>
+              {OPCOES_PRIORIDADE.map((opcao) => (
+                <Pressable
+                  key={opcao.valor}
+                  onPress={() => setPrioridade(opcao.valor)}
+                  style={[styles.opcao, prioridade === opcao.valor && styles.opcaoAtiva]}
+                >
+                  <Text style={[styles.opcaoTexto, prioridade === opcao.valor && styles.opcaoTextoAtivo]}>
+                    {opcao.label}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+
+            <View style={styles.linhaBotoes}>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.label}>Pomodoros planejados</Text>
+                <View style={styles.contador}>
+                  <Pressable onPress={() => mudarPomodoros(-1)} style={styles.botaoContador} accessibilityLabel="Diminuir pomodoros planejados">
+                    <Ionicons name="remove" size={18} color={colors.primaryDark} />
+                  </Pressable>
+                  <Text style={styles.valorContador}>{pomodoros}</Text>
+                  <Pressable onPress={() => mudarPomodoros(1)} style={styles.botaoContador} accessibilityLabel="Aumentar pomodoros planejados">
+                    <Ionicons name="add" size={18} color={colors.primaryDark} />
+                  </Pressable>
+                </View>
+              </View>
+
+              <View style={{ flex: 1 }}>
+                <Text style={styles.label}>Feitos</Text>
+                <View style={styles.contador}>
+                  <Pressable onPress={() => mudarFeitos(-1)} style={styles.botaoContador} accessibilityLabel="Diminuir pomodoros feitos">
+                    <Ionicons name="remove" size={18} color={colors.primaryDark} />
+                  </Pressable>
+                  <Text style={styles.valorContador}>{feitos}</Text>
+                  <Pressable onPress={() => mudarFeitos(1)} style={styles.botaoContador} accessibilityLabel="Aumentar pomodoros feitos">
+                    <Ionicons name="add" size={18} color={colors.primaryDark} />
+                  </Pressable>
+                </View>
+              </View>
+            </View>
+
+            <Text style={styles.label}>Anotações</Text>
+            <TextInput
+              style={[styles.input, styles.inputNotas]}
+              value={notas}
+              onChangeText={setNotas}
+              placeholder="Opcional"
+              placeholderTextColor={colors.textLight}
+              multiline
+            />
+
+            {tarefa && (
+              <Pressable onPress={excluir} style={[styles.botaoExcluir, confirmarExclusao && styles.botaoExcluirConfirmar]}>
+                <Ionicons name="trash-outline" size={16} color={confirmarExclusao ? colors.white : '#DC2626'} />
+                <Text style={[styles.textoExcluir, confirmarExclusao && { color: colors.white }]}>
+                  {confirmarExclusao ? 'Toque de novo para excluir' : 'Excluir tarefa'}
+                </Text>
+              </Pressable>
+            )}
+          </ScrollView>
+
+          <View style={styles.acoes}>
+            <Pressable onPress={onFechar} style={styles.botaoCancelar}>
+              <Text style={styles.textoCancelar}>Cancelar</Text>
+            </Pressable>
+            <Pressable onPress={salvar} style={styles.botaoSalvar}>
+              <Text style={styles.textoSalvar}>Salvar</Text>
+            </Pressable>
+          </View>
+        </View>
+      </KeyboardAvoidingView>
+    </Modal>
+  );
+}
+
+const styles = StyleSheet.create({
+  fundo: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 16,
+  },
+  caixa: {
+    width: '100%',
+    maxWidth: 440,
+    maxHeight: '92%',
+    backgroundColor: colors.white,
+    borderRadius: 20,
+    overflow: 'hidden',
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+  },
+  titulo: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: colors.text,
+  },
+  botaoFechar: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: colors.primaryBg,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  conteudo: {
+    padding: 16,
+    gap: 8,
+  },
+  label: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: colors.text,
+    marginTop: 4,
+    marginBottom: 4,
+  },
+  input: {
+    borderWidth: 1.5,
+    borderColor: colors.border,
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    fontSize: 15,
+    color: colors.text,
+    backgroundColor: colors.white,
+  },
+  inputNotas: {
+    minHeight: 70,
+    textAlignVertical: 'top',
+  },
+  erro: {
+    color: '#DC2626',
+    fontSize: 12,
+  },
+  linhaBotoes: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  opcao: {
+    flex: 1,
+    height: 40,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: colors.border,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.white,
+  },
+  opcaoAtiva: {
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
+  },
+  opcaoTexto: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: colors.textMuted,
+  },
+  opcaoTextoAtivo: {
+    color: colors.white,
+  },
+  contador: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderWidth: 1.5,
+    borderColor: colors.border,
+    borderRadius: 12,
+    padding: 4,
+  },
+  botaoContador: {
+    width: 34,
+    height: 34,
+    borderRadius: 10,
+    backgroundColor: colors.primaryBg,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  valorContador: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: colors.text,
+  },
+  botaoExcluir: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    marginTop: 8,
+    paddingVertical: 10,
+    borderRadius: 12,
+    borderWidth: 1.5,
+    borderColor: '#FCA5A5',
+  },
+  botaoExcluirConfirmar: {
+    backgroundColor: '#DC2626',
+    borderColor: '#DC2626',
+  },
+  textoExcluir: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#DC2626',
+  },
+  acoes: {
+    flexDirection: 'row',
+    gap: 12,
+    padding: 16,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
+  },
+  botaoCancelar: {
+    flex: 1,
+    paddingVertical: 14,
+    borderRadius: 12,
+    borderWidth: 1.5,
+    borderColor: colors.border,
+    alignItems: 'center',
+  },
+  textoCancelar: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: colors.textMuted,
+  },
+  botaoSalvar: {
+    flex: 1,
+    paddingVertical: 14,
+    borderRadius: 12,
+    backgroundColor: colors.primary,
+    alignItems: 'center',
+  },
+  textoSalvar: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: colors.white,
+  },
+});
+
+```
+
+───────────────────────────────────────────────────────────────────
+FILE: src/routes/cards/CardsScreen.tsx
+LINHAS: 158 · BYTES: 6728
+───────────────────────────────────────────────────────────────────
+```tsx
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
+import Header from '../../components/Header';
+import ColecaoForm from '../../components/cards/ColecaoForm';
+import ColecaoItem from '../../components/cards/ColecaoItem';
+import ColecaoCards from '../../components/cards/ColecaoCards';
+import { atualizarColecao, criarColecao, excluirColecao, listarColecoes } from '../../database/cardsRepository';
+import type { Colecao, DadosColecao } from '../../types/cards';
+import { colors } from '../../theme/colors';
+import { confirmarAcao, mostrarAviso } from '../../utils/alertas';
+
+export default function CardsScreen() {
+  const [colecoes, setColecoes] = useState<Colecao[]>([]);
+  const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState('');
+  const [atualizacao, setAtualizacao] = useState(0);
+  const [formularioAberto, setFormularioAberto] = useState(false);
+  const [colecaoEditando, setColecaoEditando] = useState<Colecao | null>(null);
+  const [colecaoAberta, setColecaoAberta] = useState<Colecao | null>(null);
+  const [excluindo, setExcluindo] = useState(false);
+  const exclusaoEmAndamento = useRef(false);
+  const montada = useRef(true);
+
+  useEffect(() => {
+    montada.current = true;
+    return () => { montada.current = false; };
+  }, []);
+
+  useFocusEffect(useCallback(() => {
+    let ativa = true;
+    async function carregar() {
+      setCarregando(true);
+      setErro('');
+      try {
+        const dados = await listarColecoes();
+        if (ativa) setColecoes(dados);
+      } catch {
+        if (ativa) setErro('Não foi possível carregar suas coleções.');
+      } finally {
+        if (ativa) setCarregando(false);
+      }
+    }
+    void carregar();
+    return () => { ativa = false; };
+  }, [atualizacao]));
+
+  function abrirFormulario(colecao: Colecao | null) {
+    setColecaoEditando(colecao);
+    setFormularioAberto(true);
+  }
+
+  async function salvar(dados: DadosColecao) {
+    let atualizada = true;
+    try {
+      if (colecaoEditando) {
+        atualizada = await atualizarColecao(colecaoEditando.id, dados);
+      } else {
+        await criarColecao(dados);
+      }
+    } catch {
+      throw new Error('Não foi possível salvar a coleção. Seus campos foram mantidos para tentar novamente.');
+    }
+    if (!atualizada) throw new Error('Esta coleção não existe mais. Feche o formulário e atualize a lista.');
+    if (montada.current) {
+      setAtualizacao((valor) => valor + 1);
+    }
+  }
+
+  async function remover(colecao: Colecao) {
+    if (exclusaoEmAndamento.current || !montada.current) return;
+    exclusaoEmAndamento.current = true;
+    setExcluindo(true);
+    try {
+      const removida = await excluirColecao(colecao.id);
+      if (montada.current) {
+        setAtualizacao((valor) => valor + 1);
+        if (!removida) mostrarAviso('Coleção não encontrada', 'A lista será atualizada.');
+      }
+    } catch {
+      if (montada.current) {
+        setAtualizacao((valor) => valor + 1);
+        mostrarAviso('Não foi possível confirmar a exclusão', 'A lista será atualizada. Confira e tente novamente.');
+      }
+    } finally {
+      exclusaoEmAndamento.current = false;
+      if (montada.current) setExcluindo(false);
+    }
+  }
+
+  function confirmarExclusao(colecao: Colecao) {
+    confirmarAcao({
+      titulo: 'Excluir coleção?',
+      mensagem: `Excluir “${colecao.nome}” também removerá todos os seus cards.`,
+      onConfirmar: () => { void remover(colecao); },
+    });
+  }
+
+  return (
+    <View style={styles.container}>
+      <Header subtitle="Cards" />
+      <View style={styles.conteudo}>
+        <Text style={styles.titulo} accessibilityRole="header">Minhas coleções</Text>
+        <Text style={styles.subtitulo}>Organize seus cards por assunto.</Text>
+        <Pressable onPress={() => abrirFormulario(null)} disabled={carregando || excluindo}
+          accessibilityRole="button" accessibilityLabel="Criar nova coleção"
+          accessibilityState={{ disabled: carregando || excluindo }}
+          style={[styles.botao, (carregando || excluindo) && styles.desabilitado]}>
+          <Text style={styles.textoBotao}>Nova coleção</Text>
+        </Pressable>
+        {carregando ? (
+          <View style={styles.estado}>
+            <ActivityIndicator size="large" color={colors.primaryDark} />
+            <Text style={styles.mensagem}>Carregando coleções…</Text>
+          </View>
+        ) : erro ? (
+          <View style={styles.estado}>
+            <Text style={styles.mensagem} accessibilityRole="alert">{erro}</Text>
+            <Pressable onPress={() => setAtualizacao((valor) => valor + 1)}
+              accessibilityRole="button" style={styles.botao}>
+              <Text style={styles.textoBotao}>Tentar novamente</Text>
+            </Pressable>
+          </View>
+        ) : (
+          <FlatList data={colecoes} keyExtractor={(item) => String(item.id)}
+            contentContainerStyle={styles.lista}
+            renderItem={({ item }) => (
+              <ColecaoItem colecao={item} desabilitado={excluindo}
+                onAbrir={() => setColecaoAberta(item)}
+                onEditar={() => abrirFormulario(item)} onExcluir={() => confirmarExclusao(item)} />
+            )}
+            ListEmptyComponent={<Text style={styles.mensagem}>Nenhuma coleção ainda. Toque em “Nova coleção” para começar.</Text>} />
+        )}
+      </View>
+      {formularioAberto && <ColecaoForm colecao={colecaoEditando}
+        onCancelar={() => setFormularioAberto(false)} onSalvar={salvar} />}
+      {colecaoAberta && <ColecaoCards key={colecaoAberta.id} colecaoId={colecaoAberta.id}
+        onFechar={() => {
+          setColecaoAberta(null);
+          setAtualizacao((valor) => valor + 1);
+        }} />}
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: colors.primaryBg },
+  conteudo: { flex: 1, paddingHorizontal: 16, paddingTop: 20 },
+  titulo: { fontSize: 24, fontWeight: '700', color: colors.text },
+  subtitulo: { color: colors.textMuted, marginTop: 6, marginBottom: 16 },
+  botao: { minHeight: 48, backgroundColor: colors.primaryDark, paddingHorizontal: 20,
+    paddingVertical: 14, borderRadius: 12, alignItems: 'center', justifyContent: 'center', marginBottom: 16 },
+  textoBotao: { color: colors.white, fontWeight: '700' },
+  lista: { paddingBottom: 24 },
+  estado: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 16 },
+  mensagem: { color: colors.textMuted, textAlign: 'center', lineHeight: 22, paddingVertical: 16 },
+  desabilitado: { opacity: 0.5 },
+});
+
+```
+
+───────────────────────────────────────────────────────────────────
+FILE: src/routes/configuracoes/ConfiguracoesScreen.tsx
+LINHAS: 18 · BYTES: 668
+───────────────────────────────────────────────────────────────────
+```tsx
+import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+import Header from '../../components/Header';
+import { colors } from '../../theme/colors';
+
+export default function ConfiguracoesScreen() {
+  return (
+    <View style={styles.container}>
+      <Header subtitle="Configurações" showBack />
+      <View style={styles.body}><Text style={styles.text}>Teste configuração</Text></View>
+    </View>
+  );
+}
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: colors.primaryBg },
+  body: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  text: { fontSize: 18, fontWeight: '700', color: colors.text },
+});
+
+```
+
+───────────────────────────────────────────────────────────────────
+FILE: src/routes/timer/TimerScreen.tsx
+LINHAS: 484 · BYTES: 22403
+───────────────────────────────────────────────────────────────────
+```tsx
+import React, { useState, useEffect, useRef } from 'react';
+import {
+  View, Text, StyleSheet, Pressable, useWindowDimensions,
+  Modal, TextInput, KeyboardAvoidingView, Platform,
+  AppState, AppStateStatus,
+} from 'react-native';
+import Svg, { Circle } from 'react-native-svg';
+import * as Haptics from 'expo-haptics';
+import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Header from '../../components/Header';
+import ModalFimSessao from '../../components/ModalFimSessao';
+import { colors } from '../../theme/colors';
+import { buscarFraseMotivacional } from '../../services/frasesMotivacionais';
+import { tocarAlarme } from '../../services/alarme';
+import { configurarNotificacoes, agendarFimDeFoco, cancelarNotificacao } from '../../services/notificacoes';
+import { segundosParaHMS, hmsParaSegundos, formatarTimer, formatarTempoCurto } from '../../utils/tempo';
+
+type Modo = 'foco' | 'pausaCurta' | 'pausaLonga';
+type Config = { focoSeg: number; pausaCurtaSeg: number; pausaLongaSeg: number; ciclos: number };
+
+const CONFIG_PADRAO: Config = {
+  focoSeg: 25 * 60,
+  pausaCurtaSeg: 5 * 60,
+  pausaLongaSeg: 15 * 60,
+  ciclos: 4,
+};
+
+function segundosDoModo(m: Modo, c: Config): number {
+  if (m === 'foco') return c.focoSeg;
+  if (m === 'pausaCurta') return c.pausaCurtaSeg;
+  return c.pausaLongaSeg;
+}
+
+export default function TimerScreen() {
+  const { width, height } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
+
+  const [config, setConfig] = useState<Config>(CONFIG_PADRAO);
+  const [modo, setModo] = useState<Modo>('foco');
+  const [sessaoAtual, setSessaoAtual] = useState(1);
+  const [timeLeft, setTimeLeft] = useState(CONFIG_PADRAO.focoSeg);
+  const [isRunning, setIsRunning] = useState(false);
+  const [configModalVisible, setConfigModalVisible] = useState(false);
+  const [draftConfig, setDraftConfig] = useState<Config>(CONFIG_PADRAO);
+  const [modalFimVisible, setModalFimVisible] = useState(false);
+  const [fraseMotivacional, setFraseMotivacional] = useState('');
+  const [carregandoFrase, setCarregandoFrase] = useState(false);
+  const [sessoesHoje, setSessoesHoje] = useState(0);
+  const notificacaoId = useRef<string | null>(null);
+
+  const totalTime = segundosDoModo(modo, config);
+
+  useEffect(() => {
+    configurarNotificacoes();
+    const loadSessoes = async () => {
+      const hoje = new Date().toISOString().slice(0, 10);
+      const stored = await AsyncStorage.getItem('@FocusTimer/focoHoje');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed.date === hoje) setSessoesHoje(parsed.count);
+        else await AsyncStorage.setItem('@FocusTimer/focoHoje', JSON.stringify({ date: hoje, count: 0 }));
+      }
+    };
+    loadSessoes();
+  }, []);
+
+  useEffect(() => {
+    if (!isRunning || timeLeft <= 0) return;
+    const id = setInterval(() => setTimeLeft((p) => p - 1), 1000);
+    return () => clearInterval(id);
+  }, [isRunning, timeLeft]);
+
+  useEffect(() => {
+    const sub = AppState.addEventListener('change', (next: AppStateStatus) => {
+      if (next === 'background' && isRunning) {
+        setIsRunning(false);
+        cancelarNotificacao(notificacaoId.current);
+        notificacaoId.current = null;
+      }
+    });
+    return () => sub.remove();
+  }, [isRunning]);
+
+  useEffect(() => {
+    if (timeLeft === 0 && isRunning) {
+      setIsRunning(false);
+      tocarAlarme();
+      
+      if (modo === 'foco') {
+        const incrementarSessao = async () => {
+          const hoje = new Date().toISOString().slice(0, 10);
+          const stored = await AsyncStorage.getItem('@FocusTimer/focoHoje');
+          let count = 1;
+          if (stored) {
+            const parsed = JSON.parse(stored);
+            if (parsed.date === hoje) count = parsed.count + 1;
+          }
+          setSessoesHoje(count);
+          await AsyncStorage.setItem('@FocusTimer/focoHoje', JSON.stringify({ date: hoje, count }));
+        };
+        incrementarSessao();
+      }
+      
+      abrirModalFim();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [timeLeft, isRunning]);
+
+  useEffect(() => {
+    if (!isRunning) setTimeLeft(segundosDoModo(modo, config));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [config]);
+
+  async function abrirModalFim() {
+    setModalFimVisible(true);
+    setCarregandoFrase(true);
+    setFraseMotivacional('');
+    const frase = await buscarFraseMotivacional();
+    setFraseMotivacional(frase);
+    setCarregandoFrase(false);
+  }
+
+  function aplicarModo(novoModo: Modo, novaSessao: number) {
+    setModo(novoModo);
+    setSessaoAtual(novaSessao);
+    setTimeLeft(segundosDoModo(novoModo, config));
+  }
+
+  function avancarCiclo() {
+    if (modo === 'foco') {
+      if (sessaoAtual >= config.ciclos) aplicarModo('pausaLonga', 1);
+      else aplicarModo('pausaCurta', sessaoAtual + 1);
+    } else {
+      aplicarModo('foco', sessaoAtual);
+    }
+  }
+
+  function proximoModoInfo() {
+    if (modo === 'foco') {
+      if (sessaoAtual >= config.ciclos) return { label: `Pausa Longa · ${formatarTempoCurto(config.pausaLongaSeg)}` };
+      return { label: `Pausa Curta · ${formatarTempoCurto(config.pausaCurtaSeg)}` };
+    }
+    return { label: `Foco · ${formatarTempoCurto(config.focoSeg)}` };
+  }
+
+  async function handleContinuar() {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    setModalFimVisible(false);
+    const eraPausa = modo !== 'foco';
+    avancarCiclo();
+    if (eraPausa) notificacaoId.current = await agendarFimDeFoco(config.focoSeg);
+    setIsRunning(true);
+  }
+
+  async function handleParar() {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    await cancelarNotificacao(notificacaoId.current);
+    notificacaoId.current = null;
+    setModalFimVisible(false);
+    setIsRunning(false);
+    setTimeLeft(segundosDoModo(modo, config));
+  }
+
+  async function toggleTimer() {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    if (!isRunning) {
+      if (modo === 'foco') notificacaoId.current = await agendarFimDeFoco(config.focoSeg);
+    } else {
+      await cancelarNotificacao(notificacaoId.current);
+      notificacaoId.current = null;
+    }
+    setIsRunning((p) => !p);
+  }
+
+  async function resetTimer() {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    await cancelarNotificacao(notificacaoId.current);
+    notificacaoId.current = null;
+    setIsRunning(false);
+    setTimeLeft(segundosDoModo(modo, config));
+  }
+
+  function trocarModo(novo: Modo) {
+    if (isRunning || novo === modo) return;
+    Haptics.selectionAsync();
+    if (novo === 'foco') aplicarModo('foco', 1);
+    else aplicarModo(novo, sessaoAtual);
+  }
+
+  function abrirConfig() {
+    Haptics.selectionAsync();
+    setDraftConfig(config);
+    setConfigModalVisible(true);
+  }
+
+  function fecharConfig() { setConfigModalVisible(false); }
+
+  function salvarConfig() {
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    const validado: Config = {
+      focoSeg: Math.max(1, draftConfig.focoSeg),
+      pausaCurtaSeg: Math.max(1, draftConfig.pausaCurtaSeg),
+      pausaLongaSeg: Math.max(1, draftConfig.pausaLongaSeg),
+      ciclos: Math.max(1, draftConfig.ciclos),
+    };
+    setConfig(validado);
+    setConfigModalVisible(false);
+  }
+
+  function handleResetFromConfig() {
+    resetTimer();
+    fecharConfig();
+  }
+
+  const formattedTime = formatarTimer(timeLeft);
+  const size = Math.min(width * 0.65, height * 0.32, 240);
+  const strokeWidth = 8;
+  const radius = (size - strokeWidth) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const progresso = totalTime > 0 ? 1 - timeLeft / totalTime : 0;
+  const strokeDashoffset = circumference * (1 - progresso);
+  const fontSize = Math.min(size * 0.25, 56);
+  const ehFoco = modo === 'foco';
+  const corProgresso = ehFoco ? colors.primary : colors.pause;
+  const corFundoCirculo = ehFoco ? colors.primaryTint : colors.pauseBg;
+  const modoLabel = ehFoco ? '🎯 MODO FOCO' : modo === 'pausaCurta' ? '☕ PAUSA CURTA' : '🛋️ PAUSA LONGA';
+
+  const proximoInfo = proximoModoInfo();
+  const modalTitulo = ehFoco ? 'Sessão de foco concluída!' : 'Pausa concluída!';
+  const modalEmoji = ehFoco ? '🎯' : '☕';
+
+  return (
+    <View style={styles.container}>
+      <Header subtitle="Foco & Produtividade" />
+      
+      <View style={styles.mainContent}>
+        <View style={styles.modoContainer}>
+          <Pressable onPress={() => trocarModo('foco')} style={[styles.modoBtn, styles.modoBtnFull, ehFoco && styles.modoBtnAtivoFoco]}>
+            <Text style={[styles.modoBtnText, ehFoco && styles.modoBtnTextAtivo]}>Foco</Text>
+          </Pressable>
+          <View style={styles.modoRowBottom}>
+            <Pressable onPress={() => trocarModo('pausaCurta')} style={[styles.modoBtn, styles.modoBtnHalf, modo === 'pausaCurta' && styles.modoBtnAtivoPausa]}>
+              <Text style={[styles.modoBtnText, modo === 'pausaCurta' && styles.modoBtnTextAtivo]}>Pausa Curta</Text>
+            </Pressable>
+            <Pressable onPress={() => trocarModo('pausaLonga')} style={[styles.modoBtn, styles.modoBtnHalf, modo === 'pausaLonga' && styles.modoBtnAtivoPausa]}>
+              <Text style={[styles.modoBtnText, modo === 'pausaLonga' && styles.modoBtnTextAtivo]}>Pausa Longa</Text>
+            </Pressable>
+          </View>
+        </View>
+
+        <View style={styles.modeBadge}>
+          <Text style={[styles.modeText, { color: corProgresso }]}>{modoLabel}</Text>
+        </View>
+
+        <View style={{ width: size, height: size }}>
+          <Svg width={size} height={size}>
+            <Circle cx={size/2} cy={size/2} r={radius} stroke={corFundoCirculo} strokeWidth={strokeWidth} fill="transparent" />
+            <Circle cx={size/2} cy={size/2} r={radius} stroke={corProgresso} strokeWidth={strokeWidth} fill="transparent" strokeDasharray={`${circumference} ${circumference}`} strokeDashoffset={strokeDashoffset} strokeLinecap="round" transform={`rotate(-90 ${size/2} ${size/2})`} />
+          </Svg>
+          <View style={[StyleSheet.absoluteFill, styles.timerCenter]}>
+            <Text style={[styles.timerText, { fontSize }]}>{formattedTime}</Text>
+            {ehFoco && <Text style={styles.sessaoText}>Sessão {sessaoAtual} de {config.ciclos}</Text>}
+          </View>
+        </View>
+
+        <Pressable style={[styles.button, isRunning ? styles.buttonPause : styles.buttonStart]} onPress={toggleTimer}>
+          <Text style={styles.buttonText}>{isRunning ? 'PAUSAR' : 'INICIAR'}</Text>
+        </Pressable>
+
+        {/* Botão de configurar centralizado, já que Reiniciar foi para o Modal */}
+        <Pressable style={styles.buttonConfigMain} onPress={abrirConfig}>
+          <Ionicons name="settings-outline" size={18} color={colors.textMuted} />
+          <Text style={styles.buttonConfigText}>Configurar tempos</Text>
+        </Pressable>
+
+        <View style={styles.sessoesCard}>
+          <View style={styles.iconCircle}>
+            <Ionicons name="flame" size={22} color={colors.pause} />
+          </View>
+          <View style={styles.sessoesTextos}>
+            <Text style={styles.sessoesLabel}>FOCO HOJE</Text>
+            <Text style={styles.sessoesValor}>{sessoesHoje} {sessoesHoje === 1 ? 'sessão' : 'sessões'}</Text>
+          </View>
+        </View>
+      </View>
+
+      {/* MODAL DE CONFIGURAÇÃO SEM SCROLL */}
+      <Modal visible={configModalVisible} transparent animationType="fade" onRequestClose={fecharConfig}>
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
+          <View style={styles.modalBackdrop}>
+            <View style={styles.modalBox}>
+              <View style={styles.modalHeader}>
+                <Text style={styles.modalTitle}>Configurar Timer</Text>
+                <Pressable onPress={fecharConfig} hitSlop={12} style={styles.modalCloseBtn}>
+                  <Ionicons name="close" size={22} color={colors.text} />
+                </Pressable>
+              </View>
+
+              <View style={styles.modalContent}>
+                <ConfigTempo label="Foco" segundos={draftConfig.focoSeg} onChange={(v) => setDraftConfig({ ...draftConfig, focoSeg: v })} />
+                <ConfigTempo label="Pausa curta" segundos={draftConfig.pausaCurtaSeg} onChange={(v) => setDraftConfig({ ...draftConfig, pausaCurtaSeg: v })} />
+                <ConfigTempo label="Pausa longa" segundos={draftConfig.pausaLongaSeg} onChange={(v) => setDraftConfig({ ...draftConfig, pausaLongaSeg: v })} />
+
+                <View style={styles.ciclosBlock}>
+                  <View style={styles.configHeader}>
+                    <Text style={styles.configTempoLabel}>Ciclos por rodada</Text>
+                  </View>
+                  <View style={styles.ciclosRow}>
+                    <TextInput style={styles.ciclosInput} keyboardType="number-pad" value={String(draftConfig.ciclos)} onChangeText={(t) => {
+                      const clean = t.replace(/[^0-9]/g, '');
+                      setDraftConfig({ ...draftConfig, ciclos: parseInt(clean, 10) || 0 });
+                    }} selectTextOnFocus />
+                    <Text style={styles.ciclosHint}>ciclos até a pausa longa</Text>
+                  </View>
+                </View>
+
+                <Pressable style={styles.btnResetModal} onPress={handleResetFromConfig}>
+                  <Ionicons name="refresh" size={18} color={colors.pauseDark} />
+                  <Text style={styles.btnResetModalText}>Reiniciar Timer Atual</Text>
+                </Pressable>
+              </View>
+
+              <View style={[styles.modalActions, { paddingBottom: Math.max(16, insets.bottom) }]}>
+                <Pressable style={styles.btnCancel} onPress={fecharConfig}>
+                  <Text style={styles.btnCancelText}>Cancelar</Text>
+                </Pressable>
+                <Pressable style={styles.btnSave} onPress={salvarConfig}>
+                  <Text style={styles.btnSaveText}>Salvar</Text>
+                </Pressable>
+              </View>
+            </View>
+          </View>
+        </KeyboardAvoidingView>
+      </Modal>
+
+      <ModalFimSessao
+        visible={modalFimVisible}
+        carregando={carregandoFrase}
+        frase={fraseMotivacional}
+        titulo={modalTitulo}
+        emoji={modalEmoji}
+        proximoLabel={proximoInfo.label}
+        onContinuar={handleContinuar}
+        onParar={handleParar}
+      />
+    </View>
+  );
+}
+
+function ConfigTempo({ label, segundos, onChange }: { label: string; segundos: number; onChange: (seg: number) => void }) {
+  const hms = segundosParaHMS(segundos);
+  const [campos, setCampos] = useState({ h: String(hms.h), m: String(hms.m), s: String(hms.s) });
+  const [atualizado, setAtualizado] = useState(false);
+
+  useEffect(() => {
+    if (!atualizado) return;
+    const novo = segundosParaHMS(segundos);
+    setCampos({ h: String(novo.h), m: String(novo.m), s: String(novo.s) });
+    setAtualizado(false);
+  }, [segundos, atualizado]);
+
+  function alterar(campo: 'h' | 'm' | 's', texto: string) {
+    const clean = texto.replace(/[^0-9]/g, '');
+    const novos = { ...campos, [campo]: clean };
+    setCampos(novos);
+    const hN = parseInt(novos.h, 10) || 0;
+    const mN = parseInt(novos.m, 10) || 0;
+    const sN = parseInt(novos.s, 10) || 0;
+    setAtualizado(true);
+    onChange(Math.max(1, hmsParaSegundos(hN, mN, sN)));
+  }
+
+  return (
+    <View style={styles.configTempoBloco}>
+      <View style={styles.configHeader}>
+        <Text style={styles.configTempoLabel}>{label}</Text>
+        <Text style={styles.configTempoPreview}>Total: {formatarTempoCurto(segundos)}</Text>
+      </View>
+      <View style={styles.unitsRow}>
+        <View style={styles.unitCol}>
+          <TextInput style={styles.unitInput} keyboardType="number-pad" value={campos.h} onChangeText={(t) => alterar('h', t)} selectTextOnFocus maxLength={3} />
+          <Text style={styles.unitLabel}>h</Text>
+        </View>
+        <Text style={styles.unitSeparator}>:</Text>
+        <View style={styles.unitCol}>
+          <TextInput style={styles.unitInput} keyboardType="number-pad" value={campos.m} onChangeText={(t) => alterar('m', t)} selectTextOnFocus maxLength={3} />
+          <Text style={styles.unitLabel}>m</Text>
+        </View>
+        <Text style={styles.unitSeparator}>:</Text>
+        <View style={styles.unitCol}>
+          <TextInput style={styles.unitInput} keyboardType="number-pad" value={campos.s} onChangeText={(t) => alterar('s', t)} selectTextOnFocus maxLength={2} />
+          <Text style={styles.unitLabel}>s</Text>
+        </View>
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: colors.primaryBg },
+  mainContent: { flex: 1, alignItems: 'center', justifyContent: 'space-evenly', paddingHorizontal: 16, paddingBottom: 16 },
+  
+  modoContainer: { width: '100%', gap: 8 },
+  modoRowBottom: { flexDirection: 'row', gap: 8 },
+  modoBtn: { height: 40, borderRadius: 12, backgroundColor: colors.white, borderWidth: 1, borderColor: colors.border, alignItems: 'center', justifyContent: 'center' },
+  modoBtnFull: { width: '100%' },
+  modoBtnHalf: { flex: 1 },
+  modoBtnAtivoFoco: { backgroundColor: colors.primary, borderColor: colors.primary },
+  modoBtnAtivoPausa: { backgroundColor: colors.pause, borderColor: colors.pause },
+  modoBtnText: { fontSize: 13, fontWeight: '600', color: colors.textMuted },
+  modoBtnTextAtivo: { color: colors.white },
+  
+  modeBadge: { backgroundColor: colors.white, paddingHorizontal: 16, paddingVertical: 6, borderRadius: 20, borderWidth: 1, borderColor: colors.border },
+  modeText: { fontSize: 12, fontWeight: '700' },
+  
+  timerCenter: { justifyContent: 'center', alignItems: 'center' },
+  timerText: { fontWeight: 'bold', color: colors.text },
+  sessaoText: { fontSize: 12, color: colors.textMuted, marginTop: 4 },
+  
+  button: { width: '80%', maxWidth: 240, paddingVertical: 14, borderRadius: 30, alignItems: 'center' },
+  buttonStart: { backgroundColor: colors.primary },
+  buttonPause: { backgroundColor: colors.pause },
+  buttonText: { color: colors.white, fontSize: 16, fontWeight: 'bold' },
+  
+  buttonConfigMain: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 10, paddingHorizontal: 16, backgroundColor: colors.white, borderRadius: 12, borderWidth: 1, borderColor: colors.border },
+  buttonConfigText: { color: colors.textMuted, fontSize: 14, fontWeight: '600' },
+  
+  sessoesCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.white,
+    borderRadius: 16,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: colors.border,
+    width: '80%',
+    maxWidth: 240,
+    gap: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  iconCircle: { width: 40, height: 40, borderRadius: 20, backgroundColor: colors.pauseBg, alignItems: 'center', justifyContent: 'center' },
+  sessoesTextos: { flex: 1 },
+  sessoesLabel: { fontSize: 11, color: colors.textMuted, fontWeight: '700', letterSpacing: 0.5, marginBottom: 2 },
+  sessoesValor: { fontSize: 16, fontWeight: '800', color: colors.text },
+
+  // Modal Styles (Sem Scroll)
+  modalBackdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center', padding: 16 },
+  modalBox: { width: '100%', maxWidth: 440, backgroundColor: colors.white, borderRadius: 20, overflow: 'hidden', flexDirection: 'column' },
+  modalHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingTop: 20, paddingBottom: 14, borderBottomWidth: 1, borderBottomColor: colors.border },
+  modalTitle: { fontSize: 18, fontWeight: 'bold', color: colors.text },
+  modalCloseBtn: { width: 32, height: 32, borderRadius: 16, backgroundColor: colors.primaryBg, alignItems: 'center', justifyContent: 'center' },
+  modalContent: { padding: 16 },
+  
+  configTempoBloco: { backgroundColor: colors.primaryBg, borderRadius: 12, padding: 12, borderWidth: 1, borderColor: colors.border, marginBottom: 10 },
+  configHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 },
+  configTempoLabel: { fontSize: 13, fontWeight: '700', color: colors.text },
+  configTempoPreview: { fontSize: 12, fontWeight: '700', color: colors.primary },
+  
+  unitsRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  unitCol: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: colors.white, borderWidth: 1.5, borderColor: colors.border, borderRadius: 10, paddingHorizontal: 4, height: 48, overflow: 'hidden' },
+  unitInput: { flex: 1, fontSize: 18, fontWeight: 'bold', textAlign: 'center', color: colors.text, height: '100%', padding: 0, margin: 0 },
+  unitLabel: { fontSize: 14, color: colors.textMuted, fontWeight: '600', marginLeft: 4 },
+  unitSeparator: { fontSize: 20, fontWeight: 'bold', color: colors.textMuted },
+
+  ciclosBlock: { backgroundColor: colors.primaryBg, borderRadius: 12, padding: 12, borderWidth: 1, borderColor: colors.border, marginBottom: 16 },
+  ciclosRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  ciclosInput: { width: 70, minHeight: 48, backgroundColor: colors.white, borderWidth: 1.5, borderColor: colors.border, borderRadius: 10, fontSize: 18, fontWeight: 'bold', textAlign: 'center', color: colors.text },
+  ciclosHint: { flex: 1, fontSize: 12, color: colors.textMuted },
+
+  btnResetModal: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 12, borderRadius: 12, borderWidth: 1, borderColor: '#FDE68A', backgroundColor: '#FEF3C7' },
+  btnResetModalText: { fontSize: 14, fontWeight: '700', color: colors.pauseDark },
+
+  modalActions: { flexDirection: 'row', gap: 12, padding: 16, borderTopWidth: 1, borderTopColor: colors.border },
+  btnCancel: { flex: 1, paddingVertical: 14, borderRadius: 12, borderWidth: 1.5, borderColor: colors.border, alignItems: 'center', backgroundColor: colors.white },
+  btnCancelText: { fontSize: 14, fontWeight: '700', color: colors.textMuted },
+  btnSave: { flex: 1, paddingVertical: 14, borderRadius: 12, backgroundColor: colors.primary, alignItems: 'center' },
+  btnSaveText: { fontSize: 14, fontWeight: '700', color: colors.white },
+});
+
+```
+
+───────────────────────────────────────────────────────────────────
+FILE: src/services/alarme.ts
+LINHAS: 34 · BYTES: 1193
+───────────────────────────────────────────────────────────────────
+```ts
+import { createAudioPlayer, setAudioModeAsync, AudioPlayer } from 'expo-audio';
+import { Vibration, Platform } from 'react-native';
+import * as Haptics from 'expo-haptics';
+
+const SOM_ALARME = 'https://actions.google.com/sounds/v1/alarms/beep_short.ogg';
+let player: AudioPlayer | null = null;
+
+export async function tocarAlarme(): Promise<void> {
+  try {
+    Vibration.vibrate([0, 400, 200, 400, 200, 400]);
+    await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+  } catch (e) { console.warn('[alarme] vibração:', e); }
+
+  try {
+    await setAudioModeAsync({ playsInSilentMode: true, shouldPlayInBackground: false });
+    if (player) { player.release(); player = null; }
+    
+    player = createAudioPlayer(SOM_ALARME);
+    player.play();
+    
+    setTimeout(() => {
+      if (player) { player.release(); player = null; }
+    }, 3000);
+  } catch (e) { console.warn('[alarme] som:', e); }
+
+  if (Platform.OS === 'android') setTimeout(() => Vibration.vibrate(200), 500);
+}
+
+export async function pararAlarme(): Promise<void> {
+  try {
+    Vibration.cancel();
+    if (player) { player.release(); player = null; }
+  } catch (e) { console.warn('[alarme] parar:', e); }
+}
+
+```
+
+───────────────────────────────────────────────────────────────────
+FILE: src/services/frasesMotivacionais.ts
+LINHAS: 33 · BYTES: 1421
+───────────────────────────────────────────────────────────────────
+```ts
+const URL_API = 'https://rodrigoborges.dev/api/frases/random';
+
+const FRASES_FALLBACK = [
+  'Cada pequeno passo é progresso. Continue!',
+  'A constância vence o talento.',
+  'Grandes conquistas começam com pequenas ações.',
+  'Você está mais perto do que estava ontem.',
+  'O esforço de hoje é o resultado de amanhã.',
+  'Foco é a arte de dizer não ao que não importa agora.',
+  'Não pare quando estiver cansado. Pare quando terminar.',
+  'O segredo do sucesso é começar.',
+  'Respire. Você está indo bem.',
+  'Um passo de cada vez, sempre.',
+];
+
+type RespostaAPI = { id: number; text: string; author: string };
+
+export async function buscarFraseMotivacional(): Promise<string> {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 5000);
+  try {
+    const resposta = await fetch(URL_API, { signal: controller.signal, headers: { Accept: 'application/json' } });
+    if (!resposta.ok) throw new Error(`HTTP ${resposta.status}`);
+    const dados: RespostaAPI = await resposta.json();
+    if (!dados?.text) throw new Error('Formato inesperado');
+    return dados.author ? `${dados.text}\n\n— ${dados.author}` : dados.text;
+  } catch (e) {
+    console.warn('[frases] API falhou, usando fallback local:', (e as Error).message);
+    return FRASES_FALLBACK[Math.floor(Math.random() * FRASES_FALLBACK.length)];
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
+```
+
+───────────────────────────────────────────────────────────────────
+FILE: src/services/notificacoes.ts
+LINHAS: 28 · BYTES: 1107
+───────────────────────────────────────────────────────────────────
+```ts
+import * as Notifications from 'expo-notifications';
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({ shouldShowAlert: true, shouldPlaySound: true, shouldSetBadge: false }),
+});
+
+export async function configurarNotificacoes(): Promise<boolean> {
+  try {
+    const { status: atual } = await Notifications.getPermissionsAsync();
+    if (atual === 'granted') return true;
+    const { status } = await Notifications.requestPermissionsAsync();
+    return status === 'granted';
+  } catch (e) { return false; }
+}
+
+export async function agendarFimDeFoco(segundos: number): Promise<string | null> {
+  try {
+    return await Notifications.scheduleNotificationAsync({
+      content: { title: 'Foco concluído! 🎉', body: `Você estudou por ${Math.round(segundos / 60)} min. Hora da pausa!`, sound: true },
+      trigger: { type: 'timeInterval', seconds: segundos },
+    });
+  } catch (e) { return null; }
+}
+
+export async function cancelarNotificacao(id: string | null): Promise<void> {
+  if (!id) return;
+  try { await Notifications.cancelScheduledNotificationAsync(id); } catch (e) {}
+}
+
+```
+
+───────────────────────────────────────────────────────────────────
+FILE: src/storage/tasks.ts
+LINHAS: 51 · BYTES: 1509
+───────────────────────────────────────────────────────────────────
+```ts
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Task } from '../types';
+
+const TASKS_KEY = '@FocusTimer/tasks';
+
+export function isTask(value: unknown): value is Task {
+  if (typeof value !== 'object' || value === null) return false;
+  const task = value as Record<string, unknown>;
+  return (
+    typeof task.id === 'string' &&
+    typeof task.title === 'string' &&
+    typeof task.className === 'string' &&
+    typeof task.priority === 'number' &&
+    typeof task.pomodoroAmount === 'number' &&
+    typeof task.completedPomodoros === 'number' &&
+    typeof task.date === 'string' &&
+    typeof task.status === 'boolean' &&
+    typeof task.notes === 'string'
+  );
+}
+
+export async function loadTasks(): Promise<Task[]> {
+  try {
+    const saved = await AsyncStorage.getItem(TASKS_KEY);
+    if (saved === null) return [];
+    const parsed: unknown = JSON.parse(saved);
+    if (!Array.isArray(parsed) || !parsed.every(isTask)) {
+      console.warn('Saved tasks have an invalid format');
+      return [];
+    }
+    return parsed;
+  } catch (e) {
+    console.error('Failed to load tasks:', e);
+    return [];
+  }
+}
+
+export async function saveTasks(tasks: Task[]): Promise<void> {
+  try {
+    await AsyncStorage.setItem(TASKS_KEY, JSON.stringify(tasks));
+  } catch (e) {
+    console.error('Failed to save tasks:', e);
+  }
+}
+
+export function createTask(task: Omit<Task, "id">): Task {
+  return {
+    ...task,
+    id: `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`,
+  };
+}
+
+```
+
+───────────────────────────────────────────────────────────────────
+FILE: src/theme/colors.ts
+LINHAS: 17 · BYTES: 379
+───────────────────────────────────────────────────────────────────
+```ts
+export const colors = {
+  primary: '#10B981',
+  primaryDark: '#059669',
+  primaryDarker: '#047857',
+  primaryLight: '#6EE7B7',
+  primaryBg: '#ECFDF5',
+  primaryTint: '#A7F3D0',
+  pause: '#F59E0B',
+  pauseDark: '#D97706',
+  pauseBg: '#FEF3C7',
+  text: '#064E3B',
+  textMuted: '#047857',
+  textLight: '#94A3B8',
+  white: '#FFFFFF',
+  border: '#D1FAE5',
+  grayStroke: '#E5E7EB',
+};
+
+```
+
+───────────────────────────────────────────────────────────────────
+FILE: src/types/cards.ts
+LINHAS: 30 · BYTES: 542
+───────────────────────────────────────────────────────────────────
+```ts
+export type Dificuldade = 'facil' | 'medio' | 'dificil';
+
+export interface Colecao {
+  id: number;
+  nome: string;
+  descricao: string | null;
+  criadaEm: string;
+  totalCards: number;
+}
+
+export interface Card {
+  id: number;
+  colecaoId: number;
+  pergunta: string;
+  resposta: string;
+  dificuldade: Dificuldade;
+  criadoEm: string;
+  atualizadoEm: string;
+}
+
+export interface DadosColecao {
+  nome: string;
+  descricao?: string | null;
+}
+
+export interface DadosCard {
+  pergunta: string;
+  resposta: string;
+  dificuldade?: Dificuldade;
+}
+
+```
+
+───────────────────────────────────────────────────────────────────
+FILE: src/types/index.ts
+LINHAS: 11 · BYTES: 204
+───────────────────────────────────────────────────────────────────
+```ts
+export type Task = {
+  id: string;
+  title: string;
+  className: string;
+  priority: number;
+  pomodoroAmount: number;
+  completedPomodoros: number;
+  date: string;
+  status: boolean;
+  notes: string;
+};
+
+```
+
+───────────────────────────────────────────────────────────────────
+FILE: src/utils/alertas.ts
+LINHAS: 32 · BYTES: 891
+───────────────────────────────────────────────────────────────────
+```ts
+import { Alert, Platform } from 'react-native';
+
+type Confirmacao = {
+  titulo: string;
+  mensagem: string;
+  onConfirmar: () => void;
+  textoConfirmar?: string;
+  textoCancelar?: string;
+  destrutiva?: boolean;
+};
+
+export function mostrarAviso(titulo: string, mensagem: string): void {
+  if (Platform.OS === 'web') {
+    window.alert(`${titulo}\n\n${mensagem}`);
+  } else {
+    Alert.alert(titulo, mensagem);
+  }
+}
+
+export function confirmarAcao({
+  titulo, mensagem, onConfirmar, textoConfirmar = 'Excluir',
+  textoCancelar = 'Cancelar', destrutiva = true,
+}: Confirmacao): void {
+  if (Platform.OS === 'web') {
+    if (window.confirm(`${titulo}\n\n${mensagem}`)) onConfirmar();
+  } else {
+    Alert.alert(titulo, mensagem, [
+      { text: textoCancelar, style: 'cancel' },
+      { text: textoConfirmar, style: destrutiva ? 'destructive' : 'default', onPress: onConfirmar },
+    ]);
+  }
+}
+
+```
+
+───────────────────────────────────────────────────────────────────
+FILE: src/utils/revisao.ts
+LINHAS: 84 · BYTES: 2914
+───────────────────────────────────────────────────────────────────
+```ts
+import type { Card, Dificuldade } from '../types/cards';
+
+export type NivelRevisao = 'todos' | Dificuldade;
+export type OrdemRevisao = 'sequencial' | 'aleatoria';
+
+export interface EstadoRevisao {
+  cards: Card[];
+  fila: Card[];
+  respostaVisivel: boolean;
+  tentativas: number;
+  acertosPrimeira: number;
+  errosIds: number[];
+  encerrada: boolean;
+}
+
+export function filtrarCards(cards: Card[], nivel: NivelRevisao): Card[] {
+  return cards.filter((card) => nivel === 'todos' || card.dificuldade === nivel);
+}
+
+export function embaralharCards(cards: Card[], aleatorio: () => number = Math.random): Card[] {
+  const resultado = [...cards];
+  for (let i = resultado.length - 1; i > 0; i--) {
+    const j = Math.floor(aleatorio() * (i + 1));
+    [resultado[i], resultado[j]] = [resultado[j], resultado[i]];
+  }
+  return resultado;
+}
+
+export function iniciarRevisao(
+  cards: Card[], nivel: NivelRevisao, ordem: OrdemRevisao, aleatorio: () => number = Math.random,
+): EstadoRevisao {
+  const selecionados = filtrarCards(cards, nivel)
+    .map((card) => ({ ...card }))
+    .sort((a, b) => a.criadoEm.localeCompare(b.criadoEm) || a.id - b.id);
+  if (selecionados.length === 0) {
+    throw new Error('Nenhum flashcard corresponde à dificuldade escolhida.');
+  }
+  return {
+    cards: selecionados,
+    fila: ordem === 'aleatoria' ? embaralharCards(selecionados, aleatorio) : [...selecionados],
+    respostaVisivel: false,
+    tentativas: 0,
+    acertosPrimeira: 0,
+    errosIds: [],
+    encerrada: false,
+  };
+}
+
+export function revelarResposta(estado: EstadoRevisao, cardId: number): EstadoRevisao {
+  if (estado.encerrada || estado.fila[0]?.id !== cardId) return estado;
+  return { ...estado, respostaVisivel: true };
+}
+
+export function responderCard(estado: EstadoRevisao, cardId: number, acertou: boolean): EstadoRevisao {
+  const card = estado.fila[0];
+  if (estado.encerrada || !estado.respostaVisivel || !card || card.id !== cardId) return estado;
+  const jaErrou = estado.errosIds.includes(card.id);
+  const restante = estado.fila.slice(1);
+  const fila = acertou ? restante : [...restante, card];
+  return {
+    ...estado,
+    fila,
+    respostaVisivel: false,
+    tentativas: estado.tentativas + 1,
+    acertosPrimeira: estado.acertosPrimeira + (acertou && !jaErrou ? 1 : 0),
+    errosIds: !acertou && !jaErrou ? [...estado.errosIds, card.id] : estado.errosIds,
+    encerrada: fila.length === 0,
+  };
+}
+
+export function encerrarRevisao(estado: EstadoRevisao): EstadoRevisao {
+  return { ...estado, encerrada: true, respostaVisivel: false };
+}
+
+export function resumirRevisao(estado: EstadoRevisao) {
+  return {
+    total: estado.cards.length,
+    concluidos: estado.cards.length - estado.fila.length,
+    pendentes: estado.fila.length,
+    tentativas: estado.tentativas,
+    acertosPrimeira: estado.acertosPrimeira,
+    cardsComErro: estado.cards.filter((card) => estado.errosIds.includes(card.id)),
+  };
+}
+
+```
+
+───────────────────────────────────────────────────────────────────
+FILE: src/utils/tempo.ts
+LINHAS: 36 · BYTES: 1151
+───────────────────────────────────────────────────────────────────
+```ts
+export type HMS = { h: number; m: number; s: number };
+
+export function segundosParaHMS(total: number): HMS {
+  const safe = Math.max(0, Math.floor(total));
+  return {
+    h: Math.floor(safe / 3600),
+    m: Math.floor((safe % 3600) / 60),
+    s: safe % 60,
+  };
+}
+
+export function hmsParaSegundos(h: number, m: number, s: number): number {
+  const hh = Math.max(0, Math.floor(h || 0));
+  const mm = Math.max(0, Math.floor(m || 0));
+  const ss = Math.max(0, Math.floor(s || 0));
+  return hh * 3600 + mm * 60 + ss;
+}
+
+export function formatarTempoCurto(total: number): string {
+  if (!total || total <= 0) return '0s';
+  const { h, m, s } = segundosParaHMS(total);
+  const partes: string[] = [];
+  if (h > 0) partes.push(`${h}h`);
+  if (m > 0) partes.push(`${m}min`);
+  if (s > 0) partes.push(`${s}s`);
+  return partes.join(' ');
+}
+
+export function formatarTimer(total: number): string {
+  const safe = Math.max(0, Math.floor(total));
+  const { h, m, s } = segundosParaHMS(safe);
+  const mm = String(m).padStart(2, '0');
+  const ss = String(s).padStart(2, '0');
+  if (h > 0) return `${String(h).padStart(2, '0')}:${mm}:${ss}`;
+  return `${mm}:${ss}`;
+}
+
+```
+
+───────────────────────────────────────────────────────────────────
+FILE: src/utils/validacao.ts
+LINHAS: 55 · BYTES: 1955
+───────────────────────────────────────────────────────────────────
+```ts
+import type { DadosCard, DadosColecao, Dificuldade } from '../types/cards';
+
+export function validarId(id: number): void {
+  if (!Number.isSafeInteger(id) || id <= 0) {
+    throw new Error('O identificador deve ser um número inteiro positivo.');
+  }
+}
+
+export function validarColecao(dados: DadosColecao): {
+  nome: string;
+  descricao: string | null;
+} {
+  if (!dados || typeof dados.nome !== 'string') {
+    throw new Error('Informe o nome da coleção.');
+  }
+
+  const nome = dados.nome.trim();
+  if (Array.from(nome).length < 1 || Array.from(nome).length > 60) {
+    throw new Error('O nome deve ter entre 1 e 60 caracteres.');
+  }
+
+  if (dados.descricao != null && typeof dados.descricao !== 'string') {
+    throw new Error('A descrição deve ser um texto.');
+  }
+
+  const descricao = dados.descricao?.trim() || null;
+  if (descricao !== null && Array.from(descricao).length > 200) {
+    throw new Error('A descrição deve ter até 200 caracteres.');
+  }
+
+  return { nome, descricao };
+}
+
+export function validarCard(dados: DadosCard): {
+  pergunta: string;
+  resposta: string;
+  dificuldade: Dificuldade;
+} {
+  if (!dados || typeof dados.pergunta !== 'string' || typeof dados.resposta !== 'string') {
+    throw new Error('Informe a pergunta e a resposta do flashcard.');
+  }
+  const pergunta = dados.pergunta.trim();
+  const resposta = dados.resposta.trim();
+  if (Array.from(pergunta).length < 1 || Array.from(pergunta).length > 500) {
+    throw new Error('A pergunta deve ter entre 1 e 500 caracteres.');
+  }
+  if (Array.from(resposta).length < 1 || Array.from(resposta).length > 500) {
+    throw new Error('A resposta deve ter entre 1 e 500 caracteres.');
+  }
+  const dificuldade = dados.dificuldade === undefined ? 'medio' : dados.dificuldade;
+  if (dificuldade !== 'facil' && dificuldade !== 'medio' && dificuldade !== 'dificil') {
+    throw new Error('Escolha uma dificuldade válida.');
+  }
+  return { pergunta, resposta, dificuldade };
+}
+
+```
+
+───────────────────────────────────────────────────────────────────
+FILE: tsconfig.json
+LINHAS: 6 · BYTES: 85
+───────────────────────────────────────────────────────────────────
+```json
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true
+  }
+}
+
+```
+
+═══════════════════════════════════════════════════════════════════
+FIM
+═══════════════════════════════════════════════════════════════════

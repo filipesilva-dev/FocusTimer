@@ -6,7 +6,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../../theme/colors';
 import { Task } from '../../types';
-import { createTask } from '../tarefas/helpers/CreateTask';
+import { createTask } from '../../storage/tasks';
 
 type Props = {
   visible: boolean;

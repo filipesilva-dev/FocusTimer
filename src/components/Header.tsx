@@ -14,7 +14,13 @@ export default function Header({ subtitle, showBack = false }: HeaderProps) {
     <View style={[styles.container, { paddingTop: insets.top + 8 }]}>
       <View style={styles.side}>
         {showBack && (
-          <Pressable onPress={() => navigation.goBack()} style={styles.iconBtn} hitSlop={8}>
+          <Pressable onPress={() => {
+              if (navigation.canGoBack()) {
+                navigation.goBack();
+              } else {
+                navigation.navigate('Timer'); // fallback de segurança
+              }
+            }} style={styles.iconBtn} hitSlop={8}>
             <Ionicons name="arrow-back" size={22} color={colors.white} />
           </Pressable>
         )}
@@ -35,9 +41,9 @@ export default function Header({ subtitle, showBack = false }: HeaderProps) {
 }
 
 const styles = StyleSheet.create({
-  container: { backgroundColor: colors.primaryDark, flexDirection: 'row', alignItems: 'center', paddingBottom: 12, paddingHorizontal: 12 },
-  side: { width: 44, alignItems: 'center', justifyContent: 'center' },
-  iconBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(255,255,255,0.18)', alignItems: 'center', justifyContent: 'center' },
+  container: { backgroundColor: colors.primaryDark, flexDirection: 'row', alignItems: 'center', paddingBottom: 14, paddingHorizontal: 16 },
+  side: { width: 48, alignItems: 'center', justifyContent: 'center' },
+  iconBtn: { width: 38, height: 38, borderRadius: 19, backgroundColor: 'rgba(255,255,255,0.18)', alignItems: 'center', justifyContent: 'center' },
   titleContainer: { flex: 1, alignItems: 'center' },
   title: { color: colors.white, fontSize: 18, fontWeight: '800' },
   subtitle: { color: colors.primaryTint, fontSize: 11, marginTop: 2, fontWeight: '500' },
