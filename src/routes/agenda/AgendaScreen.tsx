@@ -6,8 +6,8 @@ import Header from '../../components/Header';
 import { colors } from '../../theme/colors';
 import { formatarTempoCurto } from '../../utils/tempo';
 import { Task } from '../../types';
-import { loadTasks } from '../tarefas/helpers/storage/LoadTasks';
-import { saveTasks } from '../tarefas/helpers/storage/SaveTasks';
+import { loadTasks, saveTasks } from '../../storage/tasks';
+
 import TarefaModal from './TarefaModal';
 
 const MIN_POMODORO = 25; // igual ao timer
@@ -585,4 +585,4 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: colors.primaryDark,
   },
-});
+});
