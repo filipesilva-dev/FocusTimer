@@ -16,6 +16,7 @@ export async function tocarAlarme(): Promise<void> {
     if (player) { player.release(); player = null; }
     
     player = createAudioPlayer(SOM_ALARME);
+    player.volume = 0.7;
     player.play();
     
     setTimeout(() => {

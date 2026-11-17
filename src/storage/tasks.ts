@@ -28,7 +28,8 @@ export async function loadTasks(): Promise<Task[]> {
       console.warn('Saved tasks have an invalid format');
       return [];
     }
-    return parsed;
+    // Fallback para tarefas antigas que não tinham tempoEstudadoMinutos
+    return parsed.map(t => ({ ...t, tempoEstudadoMinutos: t.tempoEstudadoMinutos || 0 }));
   } catch (e) {
     console.error('Failed to load tasks:', e);
     return [];
@@ -47,5 +48,6 @@ export function createTask(task: Omit<Task, "id">): Task {
   return {
     ...task,
     id: `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`,
+    tempoEstudadoMinutos: task.tempoEstudadoMinutos || 0,
   };
 }

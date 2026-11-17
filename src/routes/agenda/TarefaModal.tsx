@@ -72,9 +72,9 @@ export default function TarefaModal({ visible, tarefa, data, onFechar, onSalvar,
     };
 
     if (tarefa) {
-      onSalvar({ ...tarefa, ...dados });
+      onSalvar({ ...tarefa, ...dados, tempoEstudadoMinutos: tarefa.tempoEstudadoMinutos || 0 });
     } else {
-      onSalvar(createTask({ ...dados, date: data, status: false }));
+      onSalvar(createTask({ ...dados, date: data, status: false, tempoEstudadoMinutos: 0 }));
     }
   }
 
