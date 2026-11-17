@@ -1,13 +1,14 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   View, Text, StyleSheet, Pressable, useWindowDimensions,
-  Modal, TextInput, KeyboardAvoidingView, Platform,
+  Modal, TextInput, ScrollView, KeyboardAvoidingView, Platform,
   AppState, AppStateStatus,
 } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
 import * as Haptics from 'expo-haptics';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Header from '../../components/Header';
 import ModalFimSessao from '../../components/ModalFimSessao';
@@ -15,6 +16,8 @@ import { colors } from '../../theme/colors';
 import { buscarFraseMotivacional } from '../../services/frasesMotivacionais';
 import { tocarAlarme } from '../../services/alarme';
 import { configurarNotificacoes, agendarFimDeFoco, cancelarNotificacao } from '../../services/notificacoes';
+import { loadTasks, saveTasks } from '../../storage/tasks';
+import { Task } from '../../types';
 import { lerTimerConfig, salvarTimerConfig, CONFIG_PADRAO, Config } from '../../storage/timerConfig';
 import { segundosParaHMS, hmsParaSegundos, formatarTimer, formatarTempoCurto } from '../../utils/tempo';
 
@@ -41,9 +44,28 @@ export default function TimerScreen() {
   const [fraseMotivacional, setFraseMotivacional] = useState('');
   const [carregandoFrase, setCarregandoFrase] = useState(false);
   const [sessoesHoje, setSessoesHoje] = useState(0);
+  const [tarefasDisponiveis, setTarefasDisponiveis] = useState<Task[]>([]);
+  const [tarefaSelecionada, setTarefaSelecionada] = useState<Task | null>(null);
+  const [modalTarefasVisible, setModalTarefasVisible] = useState(false);
   const notificacaoId = useRef<string | null>(null);
 
   const totalTime = segundosDoModo(modo, config);
+
+
+  useFocusEffect(
+    useCallback(() => {
+      let ativo = true;
+      const carregarTarefas = async () => {
+        const lista = await loadTasks();
+        if (ativo) {
+          // Pega todas as tarefas que não estão concluídas, independente da data
+          setTarefasDisponiveis(lista.filter(t => !t.status));
+        }
+      };
+      carregarTarefas();
+      return () => { ativo = false; };
+    }, [])
+  );
 
   useEffect(() => {
     configurarNotificacoes();
@@ -99,6 +121,25 @@ export default function TimerScreen() {
           }
           setSessoesHoje(count);
           await AsyncStorage.setItem('@FocusTimer/focoHoje', JSON.stringify({ date: hoje, count }));
+
+          // Atualiza a Tarefa se houver uma selecionada
+          if (tarefaSelecionada) {
+            const todas = await loadTasks();
+            const atualizadas = todas.map(t => {
+              if (t.id === tarefaSelecionada.id) {
+                return {
+                  ...t,
+                  completedPomodoros: t.completedPomodoros + 1,
+                  tempoEstudadoMinutos: (t.tempoEstudadoMinutos || 0) + Math.floor(config.focoSeg / 60),
+                };
+              }
+              return t;
+            });
+            await saveTasks(atualizadas);
+            // Atualiza o estado local para refletir na UI
+            const novaTarefa = atualizadas.find(t => t.id === tarefaSelecionada.id);
+            if (novaTarefa) setTarefaSelecionada(novaTarefa);
+          }
         };
         incrementarSessao();
       }
@@ -270,7 +311,15 @@ export default function TimerScreen() {
           <Text style={styles.buttonText}>{isRunning ? 'PAUSAR' : 'INICIAR'}</Text>
         </Pressable>
 
-        {/* Botão de configurar centralizado, já que Reiniciar foi para o Modal */}
+        {/* Seletor de Tarefa */}
+        <Pressable style={styles.tarefaSelector} onPress={() => setModalTarefasVisible(true)}>
+          <Ionicons name={tarefaSelecionada ? "book" : "book-outline"} size={18} color={tarefaSelecionada ? colors.primary : colors.textMuted} />
+          <Text style={[styles.tarefaSelectorText, tarefaSelecionada && { color: colors.primary, fontWeight: '700' }]} numberOfLines={1}>
+            {tarefaSelecionada ? tarefaSelecionada.title : 'Vincular a uma tarefa (Opcional)'}
+          </Text>
+          <Ionicons name="chevron-down" size={16} color={colors.textMuted} />
+        </Pressable>
+
         <Pressable style={styles.buttonConfigMain} onPress={abrirConfig}>
           <Ionicons name="settings-outline" size={18} color={colors.textMuted} />
           <Text style={styles.buttonConfigText}>Configurar tempos</Text>
@@ -286,6 +335,50 @@ export default function TimerScreen() {
           </View>
         </View>
       </View>
+
+      {/* BOTTOM SHEET DE SELECIONAR TAREFA */}
+      <Modal visible={modalTarefasVisible} transparent animationType="slide" onRequestClose={() => setModalTarefasVisible(false)}>
+        <View style={styles.bottomSheetBackdrop}>
+          <View style={styles.bottomSheet}>
+            <View style={styles.bottomSheetHandle} />
+            <View style={styles.bottomSheetHeader}>
+              <Text style={styles.bottomSheetTitle}>Selecionar Tarefa</Text>
+              <Pressable onPress={() => setModalTarefasVisible(false)} hitSlop={12}>
+                <Ionicons name="close" size={24} color={colors.textMuted} />
+              </Pressable>
+            </View>
+            <ScrollView contentContainerStyle={{ padding: 16, gap: 12, paddingBottom: 32 }}>
+              <Pressable style={[styles.taskOption, !tarefaSelecionada && styles.taskOptionSelected]} onPress={() => { setTarefaSelecionada(null); setModalTarefasVisible(false); }}>
+                <Text style={[styles.taskTitle, !tarefaSelecionada && { color: colors.primary }]}>Nenhuma tarefa (Apenas contar tempo)</Text>
+              </Pressable>
+              {tarefasDisponiveis.length === 0 && (
+                <Text style={{ textAlign: 'center', color: colors.textMuted, marginTop: 20 }}>Nenhuma tarefa pendente encontrada.</Text>
+              )}
+              {tarefasDisponiveis.map(t => {
+                const [ano, mes, dia] = t.date.split('-');
+                const hoje = new Date();
+                const dataLocal = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}-${String(hoje.getDate()).padStart(2, '0')}`;
+                const isHoje = t.date === dataLocal;
+                const dataFormatada = isHoje ? 'Hoje' : `${dia}/${mes}`;
+
+                return (
+                  <Pressable key={t.id} style={[styles.taskOption, tarefaSelecionada?.id === t.id && styles.taskOptionSelected]} onPress={() => { setTarefaSelecionada(t); setModalTarefasVisible(false); }}>
+                    <View style={{ flex: 1 }}>
+                      <Text style={[styles.taskTitle, tarefaSelecionada?.id === t.id && { color: colors.primary }]} numberOfLines={1}>{t.title}</Text>
+                      <View style={{ flexDirection: 'row', gap: 8, marginTop: 4 }}>
+                        <Text style={styles.taskSubtitle}>{t.className}</Text>
+                        <Text style={styles.taskSubtitle}>•</Text>
+                        <Text style={[styles.taskSubtitle, isHoje && { color: colors.primary, fontWeight: '700' }]}>{dataFormatada}</Text>
+                      </View>
+                    </View>
+                    <Text style={styles.taskPomodoros}>{t.completedPomodoros}/{t.pomodoroAmount} 🍅</Text>
+                  </Pressable>
+                );
+              })}
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
 
       {/* MODAL DE CONFIGURAÇÃO SEM SCROLL */}
       <Modal visible={configModalVisible} transparent animationType="fade" onRequestClose={fecharConfig}>
@@ -425,6 +518,20 @@ const styles = StyleSheet.create({
   buttonPause: { backgroundColor: colors.pause },
   buttonText: { color: colors.white, fontSize: 16, fontWeight: 'bold' },
   
+  tarefaSelector: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 10, paddingHorizontal: 16, backgroundColor: colors.white, borderRadius: 12, borderWidth: 1, borderColor: colors.border, width: '80%', maxWidth: 240 },
+  tarefaSelectorText: { flex: 1, color: colors.textMuted, fontSize: 13, fontWeight: '600', textAlign: 'center' },
+  
+  bottomSheetBackdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
+  bottomSheet: { backgroundColor: colors.white, borderTopLeftRadius: 24, borderTopRightRadius: 24, maxHeight: '85%', minHeight: '40%' },
+  bottomSheetHandle: { width: 40, height: 5, borderRadius: 3, backgroundColor: colors.grayStroke, alignSelf: 'center', marginTop: 12, marginBottom: 8 },
+  bottomSheetHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20, paddingBottom: 16, borderBottomWidth: 1, borderBottomColor: colors.border },
+  bottomSheetTitle: { fontSize: 18, fontWeight: '700', color: colors.text },
+  
+  taskOption: { flexDirection: 'row', alignItems: 'center', padding: 16, borderRadius: 12, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.primaryBg },
+  taskOptionSelected: { borderColor: colors.primary, backgroundColor: colors.white },
+  taskTitle: { fontSize: 15, fontWeight: '600', color: colors.text },
+  taskSubtitle: { fontSize: 13, color: colors.textMuted },
+  taskPomodoros: { fontSize: 13, fontWeight: '700', color: colors.textMuted },
   buttonConfigMain: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 10, paddingHorizontal: 16, backgroundColor: colors.white, borderRadius: 12, borderWidth: 1, borderColor: colors.border },
   buttonConfigText: { color: colors.textMuted, fontSize: 14, fontWeight: '600' },
   

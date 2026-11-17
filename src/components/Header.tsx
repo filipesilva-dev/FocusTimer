@@ -18,7 +18,7 @@ export default function Header({ subtitle, showBack = false }: HeaderProps) {
               if (navigation.canGoBack()) {
                 navigation.goBack();
               } else {
-                navigation.navigate('Timer'); // fallback de segurança
+                navigation.navigate('Timer');
               }
             }} style={styles.iconBtn} hitSlop={8}>
             <Ionicons name="arrow-back" size={22} color={colors.white} />
@@ -29,13 +29,7 @@ export default function Header({ subtitle, showBack = false }: HeaderProps) {
         <Text style={styles.title}>FocusTimer</Text>
         <Text style={styles.subtitle}>{subtitle}</Text>
       </View>
-      <View style={styles.side}>
-        {!showBack && (
-          <Pressable onPress={() => navigation.navigate('Configuracoes')} style={styles.iconBtn} hitSlop={8}>
-            <Ionicons name="settings-outline" size={22} color={colors.white} />
-          </Pressable>
-        )}
-      </View>
+      <View style={styles.side} />
     </View>
   );
 }

@@ -1,7 +1,13 @@
 import * as Notifications from 'expo-notifications';
+import { SchedulableTriggerInputTypes } from 'expo-notifications';
 
 Notifications.setNotificationHandler({
-  handleNotification: async () => ({ shouldShowAlert: true, shouldPlaySound: true, shouldSetBadge: false }),
+  handleNotification: async () => ({
+    shouldShowBanner: true,
+    shouldShowList: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+  }),
 });
 
 export async function configurarNotificacoes(): Promise<boolean> {
@@ -10,19 +16,36 @@ export async function configurarNotificacoes(): Promise<boolean> {
     if (atual === 'granted') return true;
     const { status } = await Notifications.requestPermissionsAsync();
     return status === 'granted';
-  } catch (e) { return false; }
+  } catch (e) {
+    console.warn('[notificacoes] erro ao pedir permissão:', e);
+    return false;
+  }
 }
 
 export async function agendarFimDeFoco(segundos: number): Promise<string | null> {
   try {
     return await Notifications.scheduleNotificationAsync({
-      content: { title: 'Foco concluído! 🎉', body: `Você estudou por ${Math.round(segundos / 60)} min. Hora da pausa!`, sound: true },
-      trigger: { type: 'timeInterval', seconds: segundos },
+      content: {
+        title: 'Foco concluído! 🎉',
+        body: `Você estudou por ${Math.round(segundos / 60)} min. Hora da pausa!`,
+        sound: true,
+      },
+      trigger: { 
+        type: SchedulableTriggerInputTypes.TIME_INTERVAL, 
+        seconds: segundos 
+      },
     });
-  } catch (e) { return null; }
+  } catch (e) {
+    console.warn('[notificacoes] erro ao agendar:', e);
+    return null;
+  }
 }
 
 export async function cancelarNotificacao(id: string | null): Promise<void> {
   if (!id) return;
-  try { await Notifications.cancelScheduledNotificationAsync(id); } catch (e) {}
+  try {
+    await Notifications.cancelScheduledNotificationAsync(id);
+  } catch (e) {
+    console.warn('[notificacoes] erro ao cancelar:', e);
+  }
 }

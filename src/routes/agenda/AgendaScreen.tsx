@@ -167,7 +167,7 @@ export default function AgendaScreen() {
   let minutosMes = 0;
   const diasEstudados: string[] = [];
   tarefasDoMes.forEach((t) => {
-    minutosMes += t.completedPomodoros * MIN_POMODORO;
+    minutosMes += t.tempoEstudadoMinutos || 0;
     if (t.completedPomodoros > 0 && !diasEstudados.includes(t.date)) {
       diasEstudados.push(t.date);
     }
@@ -176,7 +176,7 @@ export default function AgendaScreen() {
 
   // dia selecionado (pendentes primeiro)
   const listaDia = tarefasDoDia(diaSelecionado).sort((a, b) => Number(a.status) - Number(b.status));
-  const minutosDia = pomodorosDoDia(diaSelecionado) * MIN_POMODORO;
+  const minutosDia = tarefasDoDia(diaSelecionado).reduce((acc, t) => acc + (t.tempoEstudadoMinutos || 0), 0);
   const [a, m, d] = diaSelecionado.split('-').map(Number);
   const nomeDia = diaSelecionado === dataHoje ? 'Hoje' : NOMES_DIAS[new Date(a, m - 1, d).getDay()];
   const tituloDia = `${nomeDia}, ${d} de ${MESES[m - 1].toLowerCase()}`;
