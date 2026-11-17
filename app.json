@@ -16,10 +16,21 @@
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.filipesilvafonseca.focusTimer"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-sqlite",
+      "expo-notifications",
+      "expo-audio"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "c760bec9-dbca-4c66-b846-cbb4e8bd1c98"
+      }
     }
   }
 }

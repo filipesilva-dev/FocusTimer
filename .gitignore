@@ -2,3 +2,10 @@
 node_modules
 *.sh
 *.bash
+.expo/
+*.db
+*.db-wal
+*.db-shm
+android/
+ios/
+projeto-completo.txt
